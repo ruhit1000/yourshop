@@ -55,26 +55,26 @@ server/
 
 > **Goal:** Add all 3 product routes directly inside the `index.js` MongoClient callback. Full catalog engine — admins can add and soft-delete; public can search, filter, sort, and paginate.
 
-- [ ] `GET /api/products` — Catalog Explore Engine (public, no middleware)
-  - [ ] Accept query params: `q`, `category`, `minPrice`, `maxPrice`, `sort`, `page`, `limit`
-  - [ ] Build aggregation pipeline: `$match` (isActive + text search + price range + category)
-  - [ ] Apply sort stage (`price_asc`, `price_desc`, `newest`, `name_asc`, `stock_asc`)
-  - [ ] Count pipeline: run `$count` before skip/limit to get total
-  - [ ] Apply `$skip` / `$limit` for pagination
-  - [ ] Return `{ products, meta: { totalItems, totalPages, currentPage, itemsPerPage } }`
-- [ ] `POST /api/products` — Admin: Add Product (`verifyToken, verifyAdmin`)
-  - [ ] Validate required fields (`name`, `priceCents`, `stock`, `category`)
-  - [ ] Auto-generate `slug` from `name` (lowercase, hyphenated, de-duped via `findOne`)
-  - [ ] Set `isActive: true`, stamp `createdAt` / `updatedAt`
-  - [ ] `insertOne` and return new document `_id`
-- [ ] `DELETE /api/products/:id` — Admin: Soft-Delete (`verifyToken, verifyAdmin`)
-  - [ ] Validate `ObjectId.isValid(id)` → `400` if invalid
-  - [ ] `updateOne` → set `isActive: false`, update `updatedAt`
-  - [ ] Return `204 No Content`
-- [ ] Create MongoDB indexes on `productsCollection`
-  - [ ] `slug` unique index
-  - [ ] Text index: `name`, `description`, `tags`
-  - [ ] Single-field: `category`, `priceCents`, `isActive`, `stock`
+- [x] `GET /api/products` — Catalog Explore Engine (public, no middleware)
+  - [x] Accept query params: `q`, `category`, `minPrice`, `maxPrice`, `sort`, `page`, `limit`
+  - [x] Build aggregation pipeline: `$match` (isActive + text search + price range + category)
+  - [x] Apply sort stage (`price_asc`, `price_desc`, `newest`, `name_asc`, `stock_asc`)
+  - [x] Count pipeline: run `$count` before skip/limit to get total
+  - [x] Apply `$skip` / `$limit` for pagination
+  - [x] Return `{ products, meta: { totalItems, totalPages, currentPage, itemsPerPage } }`
+- [x] `POST /api/products` — Admin: Add Product (`verifyToken, verifyAdmin`)
+  - [x] Validate required fields (`name`, `priceCents`, `stock`, `category`)
+  - [x] Auto-generate `slug` from `name` (lowercase, hyphenated, de-duped via `findOne`)
+  - [x] Set `isActive: true`, stamp `createdAt` / `updatedAt`
+  - [x] `insertOne` and return new document `_id`
+- [x] `DELETE /api/products/:id` — Admin: Soft-Delete (`verifyToken, verifyAdmin`)
+  - [x] Validate `ObjectId.isValid(id)` → `400` if invalid
+  - [x] `updateOne` → set `isActive: false`, update `updatedAt`
+  - [x] Return `204 No Content`
+- [x] Create MongoDB indexes on `productsCollection`
+  - [x] `slug` unique index
+  - [x] Text index: `name`, `description`, `tags`
+  - [x] Single-field: `category`, `priceCents`, `isActive`, `stock`
 
 ---
 
@@ -372,7 +372,7 @@ server/
 | Batch | Area | Status |
 |---|---|---|
 | 1 | Backend: Project Foundation & Middleware | `[x]` |
-| 2 | Backend: Catalog / Products API | `[ ]` |
+| 2 | Backend: Catalog / Products API | `[x]` |
 | 3 | Backend: Cart System | `[ ]` |
 | 4 | Backend: Checkout & Orders API | `[ ]` |
 | 5 | Backend: Customers & AI Chat | `[ ]` |
