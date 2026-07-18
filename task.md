@@ -19,35 +19,35 @@ server/
   vercel.json       ← Vercel deploy config
 ```
 
-- [ ] Install missing dependency: `@google/genai` (`npm install @google/genai`)
-- [ ] Add `"start": "node index.js"` and `"dev": "nodemon index.js"` scripts to `package.json`
-- [ ] Create `server/.env`
-  - [ ] `MONGODB_URI` — MongoDB Atlas connection string
-  - [ ] `GEMINI_API_KEY` — Google Gemini API key
-  - [ ] `PORT=5000`
-- [ ] Create `server/.gitignore` — entries: `node_modules/`, `.env`
-- [ ] Create `server/vercel.json` — Vercel serverless config (`builds` + `routes`)
-- [ ] Write `server/index.js` — full single-file structure matching reference pattern
-  - [ ] Imports: `mongodb` (`MongoClient`, `ServerApiVersion`, `ObjectId`), `express`, `cors`, `dotenv`
-  - [ ] `app.use(cors())` and `app.use(express.json())`
-  - [ ] `MongoClient` instance using `process.env.MONGODB_URI` with `ServerApiVersion.v1`
-  - [ ] `client.connect(callback)` — all collections, middleware, and routes live inside this callback
-  - [ ] Inside callback: declare all 4 collection references
-    - [ ] `productsCollection = db.collection("products")`
-    - [ ] `userProfilesCollection = db.collection("userProfiles")`
-    - [ ] `cartsCollection = db.collection("carts")`
-    - [ ] `ordersCollection = db.collection("orders")`
-  - [ ] Inline `verifyToken` middleware
-    - [ ] Read `Authorization: Bearer <token>` header → return `401` if missing
-    - [ ] Look up token in Better Auth `session` collection → return `401` if not found
-    - [ ] Look up user in `userProfiles` collection → attach as `req.user` → call `next()`
-  - [ ] Inline `verifyAdmin` middleware
-    - [ ] Check `req.user?.role !== "admin"` → return `403 Forbidden`
-    - [ ] Call `next()` if valid admin
-  - [ ] Health check route: `app.get("/", ...)` → `res.send("YourShop API is running.")`
-  - [ ] `app.listen(process.env.PORT || 5000, ...)`
-  - [ ] `module.exports = app`
-- [ ] Smoke test: `node index.js` starts, MongoDB connects, `GET /` returns health string
+- [x] Install missing dependency: `@google/genai` (`npm install @google/genai`)
+- [x] Add `"start": "node index.js"` and `"dev": "nodemon index.js"` scripts to `package.json`
+- [x] Create `server/.env`
+  - [x] `MONGODB_URI` — MongoDB Atlas connection string
+  - [x] `GEMINI_API_KEY` — Google Gemini API key
+  - [x] `PORT=5000`
+- [x] Create `server/.gitignore` — entries: `node_modules/`, `.env`
+- [x] Create `server/vercel.json` — Vercel serverless config (`builds` + `routes`)
+- [x] Write `server/index.js` — full single-file structure matching reference pattern
+  - [x] Imports: `mongodb` (`MongoClient`, `ServerApiVersion`, `ObjectId`), `express`, `cors`, `dotenv`
+  - [x] `app.use(cors())` and `app.use(express.json())`
+  - [x] `MongoClient` instance using `process.env.MONGODB_URI` with `ServerApiVersion.v1`
+  - [x] `client.connect(callback)` — all collections, middleware, and routes live inside this callback
+  - [x] Inside callback: declare all 4 collection references
+    - [x] `productsCollection = db.collection("products")`
+    - [x] `userProfilesCollection = db.collection("userProfiles")`
+    - [x] `cartsCollection = db.collection("carts")`
+    - [x] `ordersCollection = db.collection("orders")`
+  - [x] Inline `verifyToken` middleware
+    - [x] Read `Authorization: Bearer <token>` header → return `401` if missing
+    - [x] Look up token in Better Auth `session` collection → return `401` if not found
+    - [x] Look up user in `userProfiles` collection → attach as `req.user` → call `next()`
+  - [x] Inline `verifyAdmin` middleware
+    - [x] Check `req.user?.role !== "admin"` → return `403 Forbidden`
+    - [x] Call `next()` if valid admin
+  - [x] Health check route: `app.get("/", ...)` → `res.send("YourShop API is running.")`
+  - [x] `app.listen(process.env.PORT || 5000, ...)`
+  - [x] `module.exports = app`
+- [x] Smoke test: `node index.js` starts, MongoDB connects, `GET /` returns health string
 
 ---
 
@@ -371,7 +371,7 @@ server/
 
 | Batch | Area | Status |
 |---|---|---|
-| 1 | Backend: Project Foundation & Middleware | `[ ]` |
+| 1 | Backend: Project Foundation & Middleware | `[x]` |
 | 2 | Backend: Catalog / Products API | `[ ]` |
 | 3 | Backend: Cart System | `[ ]` |
 | 4 | Backend: Checkout & Orders API | `[ ]` |
