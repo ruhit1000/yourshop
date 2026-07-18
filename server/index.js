@@ -514,7 +514,105 @@ client.connect().then(() => {
     }
   });
 
-  // Routes will be added here in subsequent batches
+  // GET /api/admin/customers — Admin: Customer Accounts
+  app.get("/api/admin/customers", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 20;
+      const skip = (page - 1) * limit;
+
+      const totalItems = await userProfilesCollection.countDocuments();
+      const totalPages = Math.ceil(totalItems / limit) || 1;
+
+      const customers = await userProfilesCollection
+        .find({})
+        .project({ email: 1, displayName: 1, avatarUrl: 1, role: 1, createdAt: 1 })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+      res.send({ customers, pagination: { totalItems, totalPages, currentPage: page, itemsPerPage: limit } });
+    } catch (error) {
+      console.error("Error in GET /api/admin/customers:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // POST /api/chat — Agentic AI Chat
+  const { GoogleGenAI } = require('@google/genai');
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  
+  app.post("/api/chat", verifyToken, async (req, res) => {
+    try {
+      const { history, message } = req.body;
+      
+      // Step 1 & 2: Get active products and minify
+      const activeProducts = await productsCollection
+        .find({ isActive: true })
+        .project({ name: 1, category: 1, priceCents: 1, stock: 1, tags: 1, description: 1, _id: 0 })
+        .toArray();
+        
+      const minifiedInventory = activeProducts.map(p => ({
+        n: p.name,
+        cat: p.category,
+        price: `$${(p.priceCents / 100).toFixed(2)}`,
+        stock: p.stock,
+        tags: p.tags,
+        desc: p.description ? p.description.substring(0, 150) : ""
+      }));
+
+      // Step 3: Build System Instruction
+      const systemInstruction = `You are the YourShop AI Assistant. You help users find products, recommend items, and answer questions.
+Here is the current live inventory in JSON format:
+${JSON.stringify(minifiedInventory)}
+
+CRITICAL INSTRUCTION: At the very end of every reply you generate, you MUST append a block exactly like this:
+SUGGEST_JSON:["Prompt 1", "Prompt 2", "Prompt 3"]
+This JSON array should contain exactly 3 suggested follow-up questions the user can ask you based on your response.`;
+
+      // Step 4: Map client history
+      const contents = [];
+      if (history && Array.isArray(history)) {
+        history.forEach(msg => {
+          contents.push({ role: msg.role === 'model' ? 'model' : 'user', parts: [{ text: msg.text }] });
+        });
+      }
+      if (message) {
+        contents.push({ role: 'user', parts: [{ text: message }] });
+      }
+
+      // Step 5 & 6: Stream response
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
+      const responseStream = await ai.models.generateContentStream({
+        model: 'gemini-2.5-flash',
+        contents,
+        config: { systemInstruction }
+      });
+
+      for await (const chunk of responseStream) {
+        if (chunk.text) {
+          res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
+        }
+      }
+      
+      res.write(`data: [DONE]\n\n`);
+      res.end();
+    } catch (error) {
+      console.error("Error in POST /api/chat:", error);
+      if (!res.headersSent) {
+        res.status(500).send({ error: "Internal server error" });
+      } else {
+        res.write(`data: ${JSON.stringify({ error: "Internal server error" })}\n\n`);
+        res.end();
+      }
+    }
+  });
+
+  // End of routes
 }).catch(console.dir);
 
 // Health check route

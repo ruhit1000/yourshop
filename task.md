@@ -134,21 +134,21 @@ server/
 
 > **Goal:** Add the final 2 routes inside the `index.js` MongoClient callback. Admin can view customer accounts; AI chat assistant powered by Gemini 2.5 Flash with live inventory context and streaming.
 
-- [ ] `GET /api/admin/customers` — Admin: Customer Accounts (`verifyToken, verifyAdmin`)
-  - [ ] `find` on `userProfilesCollection`
-  - [ ] Project: `email`, `displayName`, `avatarUrl`, `role`, `createdAt` (omit sensitive fields)
-  - [ ] Paginate: 20 per page via `skip` / `limit`
-  - [ ] Return `{ customers, pagination: { ... } }`
-- [ ] `POST /api/chat` — Agentic AI Chat (`verifyToken`)
-  - [ ] Step 1: `find` active products with projection (`name`, `category`, `priceCents`, `stock`, `tags`, `description`, `_id: 0`)
-  - [ ] Step 2: Minify product array — rename keys (`n`, `cat`, `price`, `stock`, `tags`, `desc`), truncate description to 150 chars, format price as `"$X.XX"`
-  - [ ] Step 3: Build `systemInstruction` string with minified inventory JSON injected
-  - [ ] Step 4: Map client `history` array to Gemini SDK format (`{ role, parts: [{ text }] }`)
-  - [ ] Step 5: Initialize `GoogleGenerativeAI` with `GEMINI_API_KEY`; call `model.startChat({ history })`
-  - [ ] Step 6: Stream response using `generateContentStream`; set `Content-Type: text/event-stream` and pipe chunks to `res`
-  - [ ] Step 7: Append `SUGGEST_JSON:[...]` block to system prompt instructing Gemini to end each reply with 3 suggested prompts in a parseable JSON suffix
-  - [ ] Return final `{ reply, suggestedPrompts }` on stream end
-- [ ] Final verification: all 12 endpoints registered, server restarts cleanly, test each route with a REST client
+- [x] `GET /api/admin/customers` — Admin: Customer Accounts (`verifyToken, verifyAdmin`)
+  - [x] `find` on `userProfilesCollection`
+  - [x] Project: `email`, `displayName`, `avatarUrl`, `role`, `createdAt` (omit sensitive fields)
+  - [x] Paginate: 20 per page via `skip` / `limit`
+  - [x] Return `{ customers, pagination: { ... } }`
+- [x] `POST /api/chat` — Agentic AI Chat (`verifyToken`)
+  - [x] Step 1: `find` active products with projection (`name`, `category`, `priceCents`, `stock`, `tags`, `description`, `_id: 0`)
+  - [x] Step 2: Minify product array — rename keys (`n`, `cat`, `price`, `stock`, `tags`, `desc`), truncate description to 150 chars, format price as `"$X.XX"`
+  - [x] Step 3: Build `systemInstruction` string with minified inventory JSON injected
+  - [x] Step 4: Map client `history` array to Gemini SDK format (`{ role, parts: [{ text }] }`)
+  - [x] Step 5: Initialize `GoogleGenerativeAI` with `GEMINI_API_KEY`; call `model.startChat({ history })`
+  - [x] Step 6: Stream response using `generateContentStream`; set `Content-Type: text/event-stream` and pipe chunks to `res`
+  - [x] Step 7: Append `SUGGEST_JSON:[...]` block to system prompt instructing Gemini to end each reply with 3 suggested prompts in a parseable JSON suffix
+  - [x] Return final `{ reply, suggestedPrompts }` on stream end
+- [x] Final verification: all 12 endpoints registered, server restarts cleanly, test each route with a REST client
 
 ---
 
@@ -376,7 +376,7 @@ server/
 | 2 | Backend: Catalog / Products API | `[x]` |
 | 3 | Backend: Cart System | `[x]` |
 | 4 | Backend: Checkout & Orders API | `[x]` |
-| 5 | Backend: Customers & AI Chat | `[ ]` |
+| 5 | Backend: Customers & AI Chat | `[x]` |
 | 6 | Frontend: Project Foundation & Design System | `[ ]` |
 | 7 | Frontend: Navbar, Footer & Home Page | `[ ]` |
 | 8 | Frontend: Shop & Product Detail | `[ ]` |
