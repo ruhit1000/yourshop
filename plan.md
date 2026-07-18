@@ -957,6 +957,7 @@ Used everywhere: Featured section, Shop page, Related products.
 │  Category    │  [Card] [Card] [Card] [Card]      │
 │  Checkboxes  │  ──────────────────────────────── │
 │              │  [← 1  2  3  4 … →]  Pagination  │
+│              │  [          Loading...       ]  Lazy Load  │
 │  Price Range │                                   │
 │  Slider      │                                   │
 │              │                                   │
@@ -976,9 +977,11 @@ Used everywhere: Featured section, Shop page, Related products.
 
 **Search:** Debounced (300ms) text input → `q` query param.
 
-**Pagination:**
+**Pagination & Lazy Loading:**
 - Numbered page buttons + Prev/Next arrows.
 - URL-synced (`?page=2`) so browser back/forward works.
+- Infinite scroll utilizing intersection observer.
+- Fetches the next page of 30 items automatically.
 - TanStack Query `keepPreviousData: true` for smooth page transitions.
 
 **Behavior:**
@@ -1294,7 +1297,8 @@ app/
 │   │   └── <StockToggle />
 │   ├── <SortDropdown />
 │   ├── <ProductGrid />            ← maps <ProductCard /> or <SkeletonCard />
-│   └── <Pagination />
+│   ├── <Pagination />
+│   └── <LazyLoader />
 │
 ├── products/[slug]/page.js
 │   ├── <ImageGallery />

@@ -82,23 +82,23 @@ server/
 
 > **Goal:** Add all 3 cart routes inside the `index.js` MongoClient callback. Persistent, upsert-managed cart per user with live product data aggregation on fetch.
 
-- [ ] `GET /api/cart` — Fetch User Cart (`verifyToken`)
-  - [ ] Run `$lookup` aggregation: `items.productId` → `productsCollection._id`
-  - [ ] `$match` to filter inactive products out of result
-  - [ ] `$group` back into a single cart document
-  - [ ] Return enriched cart with product metadata + cart quantities
-- [ ] `POST /api/cart` — Add / Increment Cart Item (`verifyToken`)
-  - [ ] Validate `ObjectId.isValid(productId)` → `400` if invalid
-  - [ ] `findOne` product in `productsCollection` (`isActive: true`) → `404` if missing
-  - [ ] If `productId` already in `items` → `$inc` the quantity using array filter
-  - [ ] If new → `$push` new item element `{ productId, quantity, addedAt }`
-  - [ ] `upsert: true` to create cart document if user has none
-  - [ ] `$set updatedAt`
-- [ ] `PATCH /api/cart` — Update Cart Item Quantity / Remove (`verifyToken`)
-  - [ ] `quantity > 0` → `$set` via positional `$` operator
-  - [ ] `quantity === 0` → `$pull` item from `items` array
-  - [ ] `$set updatedAt`
-- [ ] Create MongoDB indexes on `cartsCollection`: `userId` (unique), `items.productId`
+- [x] `GET /api/cart` — Fetch User Cart (`verifyToken`)
+  - [x] Run `$lookup` aggregation: `items.productId` → `productsCollection._id`
+  - [x] `$match` to filter inactive products out of result
+  - [x] `$group` back into a single cart document
+  - [x] Return enriched cart with product metadata + cart quantities
+- [x] `POST /api/cart` — Add / Increment Cart Item (`verifyToken`)
+  - [x] Validate `ObjectId.isValid(productId)` → `400` if invalid
+  - [x] `findOne` product in `productsCollection` (`isActive: true`) → `404` if missing
+  - [x] If `productId` already in `items` → `$inc` the quantity using array filter
+  - [x] If new → `$push` new item element `{ productId, quantity, addedAt }`
+  - [x] `upsert: true` to create cart document if user has none
+  - [x] `$set updatedAt`
+- [x] `PATCH /api/cart` — Update Cart Item Quantity / Remove (`verifyToken`)
+  - [x] `quantity > 0` → `$set` via positional `$` operator
+  - [x] `quantity === 0` → `$pull` item from `items` array
+  - [x] `$set updatedAt`
+- [x] Create MongoDB indexes on `cartsCollection`: `userId` (unique), `items.productId`
 
 ---
 
@@ -106,27 +106,27 @@ server/
 
 > **Goal:** Add all 4 checkout and order routes inside the `index.js` MongoClient callback. Safe, stock-validated checkout with price snapshotting, inventory deduction, cart clearing, and full order lifecycle management.
 
-- [ ] `POST /api/checkout` — Checkout Flow (`verifyToken`)
-  - [ ] Step 1: `findOne` cart by `req.user._id` → `400` if empty
-  - [ ] Step 2: `find` all `productId`s from cart in `productsCollection` → build `productMap`
-  - [ ] Step 3: Stock validation loop — `409` on insufficient stock or missing product
-  - [ ] Step 4: Build snapshotted order document (name, imageUrl, priceCents captured at checkout time)
-  - [ ] Step 5: `insertOne` into `ordersCollection`
-  - [ ] Step 6: `bulkWrite` stock deduction — each `updateOne` uses `$gte` guard; verify `modifiedCount`
-  - [ ] Step 7: `updateOne` cart → `$set items: []` (clear cart)
-  - [ ] Return `201 { orderId, totalCents, status: "Pending" }`
-- [ ] `GET /api/orders` — Customer Order History (`verifyToken`)
-  - [ ] Scope to `req.user._id`, sort `createdAt: -1`
-  - [ ] Paginate with `page` / `limit` query params
-- [ ] `GET /api/admin/orders` — Admin: All Platform Orders (`verifyToken, verifyAdmin`)
-  - [ ] Optional `status` filter via query param
-  - [ ] Paginate with `page` / `limit`
-- [ ] `PATCH /api/admin/orders/:id` — Admin: Update Order Status (`verifyToken, verifyAdmin`)
-  - [ ] Validate `ObjectId.isValid(id)` → `400` if invalid
-  - [ ] Validate status transition against allowed matrix → `400` on illegal transition
-  - [ ] `$push` to `statusHistory`: `{ status, changedAt: new Date(), note }`
-  - [ ] `$set status` and `updatedAt`
-- [ ] Create MongoDB indexes on `ordersCollection`: `userId`, `status`, `createdAt` (desc), compound `userId + createdAt`
+- [x] `POST /api/checkout` — Checkout Flow (`verifyToken`)
+  - [x] Step 1: `findOne` cart by `req.user._id` → `400` if empty
+  - [x] Step 2: `find` all `productId`s from cart in `productsCollection` → build `productMap`
+  - [x] Step 3: Stock validation loop — `409` on insufficient stock or missing product
+  - [x] Step 4: Build snapshotted order document (name, imageUrl, priceCents captured at checkout time)
+  - [x] Step 5: `insertOne` into `ordersCollection`
+  - [x] Step 6: `bulkWrite` stock deduction — each `updateOne` uses `$gte` guard; verify `modifiedCount`
+  - [x] Step 7: `updateOne` cart → `$set items: []` (clear cart)
+  - [x] Return `201 { orderId, totalCents, status: "Pending" }`
+- [x] `GET /api/orders` — Customer Order History (`verifyToken`)
+  - [x] Scope to `req.user._id`, sort `createdAt: -1`
+  - [x] Paginate with `page` / `limit` query params
+- [x] `GET /api/admin/orders` — Admin: All Platform Orders (`verifyToken, verifyAdmin`)
+  - [x] Optional `status` filter via query param
+  - [x] Paginate with `page` / `limit`
+- [x] `PATCH /api/admin/orders/:id` — Admin: Update Order Status (`verifyToken, verifyAdmin`)
+  - [x] Validate `ObjectId.isValid(id)` → `400` if invalid
+  - [x] Validate status transition against allowed matrix → `400` on illegal transition
+  - [x] `updateOne` order `status`, push to `statusHistory` array
+  - [x] `upsert: true` on `ordersCollection` index: `userId`, `status`, `createdAt`
+- [x] Create MongoDB indexes on `ordersCollection`: `userId`, `status`, `createdAt` (desc), compound `userId + createdAt`
 
 ---
 
@@ -219,6 +219,7 @@ server/
   - [ ] `<SortDropdown />` — `price_asc`, `price_desc`, `newest`, `name_asc`, syncs to `?sort=`
   - [ ] `<ProductGrid />` — 4/2/1 col grid, maps `<ProductCard>` or `<SkeletonCard>` while loading
   - [ ] `<Pagination />` — URL-synced, `keepPreviousData: true` TanStack Query
+  - [ ] `<LazyLoader />` — Infinite scroll / intersection observer, `useInfiniteQuery` with TanStack Query
   - [ ] Filter sidebar collapses to slide-up bottom sheet on mobile
   - [ ] All filters shareable/bookmarkable via URL query string
 - [ ] Build Product Detail Page (`app/products/[slug]/page.js`)
@@ -373,8 +374,8 @@ server/
 |---|---|---|
 | 1 | Backend: Project Foundation & Middleware | `[x]` |
 | 2 | Backend: Catalog / Products API | `[x]` |
-| 3 | Backend: Cart System | `[ ]` |
-| 4 | Backend: Checkout & Orders API | `[ ]` |
+| 3 | Backend: Cart System | `[x]` |
+| 4 | Backend: Checkout & Orders API | `[x]` |
 | 5 | Backend: Customers & AI Chat | `[ ]` |
 | 6 | Frontend: Project Foundation & Design System | `[ ]` |
 | 7 | Frontend: Navbar, Footer & Home Page | `[ ]` |

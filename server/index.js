@@ -76,7 +76,7 @@ client.connect().then(() => {
   // GET /api/products — Catalog Explore Engine
   app.get("/api/products", async (req, res) => {
     try {
-      const { q, category, minPrice, maxPrice, sort, page = 1, limit = 10 } = req.query;
+      const { q, category, minPrice, maxPrice, sort, page = 1, limit = 30 } = req.query;
       const matchStage = { isActive: true };
       
       if (q) {
@@ -195,6 +195,321 @@ client.connect().then(() => {
       res.status(204).send();
     } catch (error) {
       console.error("Error in DELETE /api/products/:id:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // Batch 3: Create Indexes for cartsCollection
+  cartsCollection.createIndex({ userId: 1 }, { unique: true }).catch(console.error);
+  cartsCollection.createIndex({ "items.productId": 1 }).catch(console.error);
+
+  // GET /api/cart — Fetch User Cart
+  app.get("/api/cart", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      
+      const pipeline = [
+        { $match: { userId: new ObjectId(userId) } },
+        { $unwind: { path: "$items", preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "items.productId",
+            foreignField: "_id",
+            as: "productDetails"
+          }
+        },
+        { $unwind: { path: "$productDetails", preserveNullAndEmptyArrays: true } },
+        { $match: { $or: [{ "productDetails.isActive": true }, { "items": { $exists: false } }] } }, 
+        {
+          $group: {
+            _id: "$_id",
+            userId: { $first: "$userId" },
+            createdAt: { $first: "$createdAt" },
+            updatedAt: { $first: "$updatedAt" },
+            items: {
+              $push: {
+                $cond: [
+                  { $ifNull: ["$items.productId", false] },
+                  {
+                    productId: "$items.productId",
+                    quantity: "$items.quantity",
+                    addedAt: "$items.addedAt",
+                    product: "$productDetails"
+                  },
+                  "$$REMOVE"
+                ]
+              }
+            }
+          }
+        }
+      ];
+      
+      const result = await cartsCollection.aggregate(pipeline).toArray();
+      let cart = result[0];
+      
+      if (!cart) {
+        // If aggregation matched no active products but cart exists, 
+        // or user has no cart, fetch fallback.
+        cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+        if (!cart) {
+          cart = { userId, items: [], createdAt: new Date(), updatedAt: new Date() };
+        } else {
+          cart.items = []; // all items were inactive
+        }
+      }
+      
+      let cartTotal = 0;
+      if (cart && cart.items) {
+        cart.items.forEach(item => {
+          if (item.product && item.product.priceCents) {
+            cartTotal += item.product.priceCents * item.quantity;
+          }
+        });
+      }
+      cart.cartTotal = cartTotal;
+      
+      res.send(cart);
+    } catch (error) {
+      console.error("Error in GET /api/cart:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // POST /api/cart — Add / Increment Cart Item
+  app.post("/api/cart", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const { productId, quantity = 1 } = req.body;
+      
+      if (!ObjectId.isValid(productId)) {
+        return res.status(400).send({ error: "Invalid product ID format" });
+      }
+      
+      const product = await productsCollection.findOne({ _id: new ObjectId(productId), isActive: true });
+      if (!product) {
+        return res.status(404).send({ error: "Product not found or inactive" });
+      }
+      
+      const cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+      
+      if (cart) {
+        const itemExists = cart.items.find(item => item.productId.toString() === productId);
+        if (itemExists) {
+          await cartsCollection.updateOne(
+            { userId: new ObjectId(userId), "items.productId": new ObjectId(productId) },
+            { 
+              $inc: { "items.$.quantity": quantity },
+              $set: { updatedAt: new Date() }
+            }
+          );
+        } else {
+          await cartsCollection.updateOne(
+            { userId: new ObjectId(userId) },
+            { 
+              $push: { items: { productId: new ObjectId(productId), quantity, addedAt: new Date() } },
+              $set: { updatedAt: new Date() }
+            }
+          );
+        }
+      } else {
+        await cartsCollection.insertOne({
+          userId: new ObjectId(userId),
+          items: [{ productId: new ObjectId(productId), quantity, addedAt: new Date() }],
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+      
+      res.status(200).send({ message: "Cart updated successfully" });
+    } catch (error) {
+      console.error("Error in POST /api/cart:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // PATCH /api/cart — Update Cart Item Quantity / Remove
+  app.patch("/api/cart", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const { productId, quantity } = req.body;
+      
+      if (!ObjectId.isValid(productId)) {
+        return res.status(400).send({ error: "Invalid product ID format" });
+      }
+      if (quantity === undefined || quantity < 0) {
+        return res.status(400).send({ error: "Valid quantity is required" });
+      }
+      
+      if (quantity === 0) {
+        await cartsCollection.updateOne(
+          { userId: new ObjectId(userId) },
+          { 
+            $pull: { items: { productId: new ObjectId(productId) } },
+            $set: { updatedAt: new Date() }
+          }
+        );
+      } else {
+        await cartsCollection.updateOne(
+          { userId: new ObjectId(userId), "items.productId": new ObjectId(productId) },
+          { 
+            $set: { 
+              "items.$.quantity": quantity,
+              updatedAt: new Date()
+            }
+          }
+        );
+      }
+      
+      res.status(200).send({ message: "Cart item updated successfully" });
+    } catch (error) {
+      console.error("Error in PATCH /api/cart:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // Batch 4: Create Indexes for ordersCollection
+  ordersCollection.createIndex({ userId: 1 }).catch(console.error);
+  ordersCollection.createIndex({ createdAt: -1 }).catch(console.error);
+
+  // POST /api/checkout — Checkout Flow
+  app.post("/api/checkout", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      
+      const cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+      if (!cart || !cart.items || cart.items.length === 0) {
+        return res.status(400).send({ error: "Cart is empty" });
+      }
+      
+      const productIds = cart.items.map(item => new ObjectId(item.productId));
+      const products = await productsCollection.find({ _id: { $in: productIds } }).toArray();
+      
+      const productMap = {};
+      products.forEach(p => {
+        productMap[p._id.toString()] = p;
+      });
+      
+      let orderTotal = 0;
+      const orderItems = [];
+      
+      for (const item of cart.items) {
+        const product = productMap[item.productId.toString()];
+        if (!product || !product.isActive) {
+          return res.status(400).send({ error: `Product ${item.productId} is unavailable` });
+        }
+        if (product.stock < item.quantity) {
+          return res.status(400).send({ error: `Not enough stock for ${product.name}` });
+        }
+        
+        orderTotal += product.priceCents * item.quantity;
+        orderItems.push({
+          productId: product._id,
+          name: product.name,
+          priceCents: product.priceCents,
+          quantity: item.quantity,
+          imageUrl: product.imageUrl
+        });
+      }
+      
+      const newOrder = {
+        userId: new ObjectId(userId),
+        items: orderItems,
+        totalCents: orderTotal,
+        status: "processing",
+        shippingAddress: req.body.shippingAddress || null, 
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      const orderResult = await ordersCollection.insertOne(newOrder);
+      
+      // Deduct stock
+      for (const item of orderItems) {
+        await productsCollection.updateOne(
+          { _id: item.productId },
+          { $inc: { stock: -item.quantity } }
+        );
+      }
+      
+      // Clear cart
+      await cartsCollection.deleteOne({ userId: new ObjectId(userId) });
+      
+      res.status(201).send({ _id: orderResult.insertedId, message: "Order placed successfully" });
+    } catch (error) {
+      console.error("Error in POST /api/checkout:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // GET /api/orders — Fetch User Orders
+  app.get("/api/orders", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const orders = await ordersCollection.find({ userId: new ObjectId(userId) })
+                                           .sort({ createdAt: -1 })
+                                           .toArray();
+      res.send(orders);
+    } catch (error) {
+      console.error("Error in GET /api/orders:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // GET /api/orders/:id — Order Detail
+  app.get("/api/orders/:id", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const orderId = req.params.id;
+      
+      if (!ObjectId.isValid(orderId)) {
+        return res.status(400).send({ error: "Invalid order ID format" });
+      }
+      
+      const query = { _id: new ObjectId(orderId) };
+      if (req.user.role !== "admin") {
+        query.userId = new ObjectId(userId);
+      }
+      
+      const order = await ordersCollection.findOne(query);
+      if (!order) {
+        return res.status(404).send({ error: "Order not found" });
+      }
+      
+      res.send(order);
+    } catch (error) {
+      console.error("Error in GET /api/orders/:id:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // PATCH /api/orders/:id — Admin: Update Status
+  app.patch("/api/orders/:id", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+      const orderId = req.params.id;
+      const { status } = req.body;
+      
+      if (!ObjectId.isValid(orderId)) {
+        return res.status(400).send({ error: "Invalid order ID format" });
+      }
+      
+      const validStatuses = ["processing", "shipped", "delivered", "cancelled"];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).send({ error: "Invalid status value" });
+      }
+      
+      const result = await ordersCollection.updateOne(
+        { _id: new ObjectId(orderId) },
+        { $set: { status, updatedAt: new Date() } }
+      );
+      
+      if (result.matchedCount === 0) {
+        return res.status(404).send({ error: "Order not found" });
+      }
+      
+      res.send({ message: "Order status updated successfully" });
+    } catch (error) {
+      console.error("Error in PATCH /api/orders/:id:", error);
       res.status(500).send({ error: "Internal server error" });
     }
   });
