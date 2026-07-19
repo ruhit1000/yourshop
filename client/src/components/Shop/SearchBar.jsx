@@ -8,9 +8,17 @@ export default function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const currentQ = searchParams.get("q") || "";
+  const [query, setQuery] = useState(currentQ);
+
+  // Sync input value with URL search parameter when it changes (e.g., cleared)
+  useEffect(() => {
+    setQuery(currentQ);
+  }, [currentQ]);
 
   useEffect(() => {
+    if (query === currentQ) return;
+
     const delayDebounceFn = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
       if (query) {
@@ -23,7 +31,7 @@ export default function SearchBar() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query, router, pathname, searchParams]);
+  }, [query, router, pathname, searchParams, currentQ]);
 
   return (
     <div className="relative w-full">

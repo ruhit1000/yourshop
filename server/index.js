@@ -76,19 +76,24 @@ client.connect().then(() => {
   // GET /api/products — Catalog Explore Engine
   app.get("/api/products", async (req, res) => {
     try {
-      const { q, category, minPrice, maxPrice, sort, page = 1, limit = 30 } = req.query;
+      const { q, category, minPrice, maxPrice, sort, page = 1, limit = 18 } = req.query;
       const matchStage = { isActive: true };
       
       if (q) {
-        matchStage.$text = { $search: q };
+        matchStage.$or = [
+          { name: { $regex: q, $options: "i" } },
+          { description: { $regex: q, $options: "i" } },
+          { category: { $regex: q, $options: "i" } },
+          { brand: { $regex: q, $options: "i" } }
+        ];
       }
       if (category) {
         matchStage.category = category;
       }
       if (minPrice || maxPrice) {
         matchStage.priceCents = {};
-        if (minPrice) matchStage.priceCents.$gte = parseInt(minPrice);
-        if (maxPrice) matchStage.priceCents.$lte = parseInt(maxPrice);
+        if (minPrice) matchStage.priceCents.$gte = parseInt(minPrice) * 100;
+        if (maxPrice) matchStage.priceCents.$lte = parseInt(maxPrice) * 100;
       }
       
       const pipeline = [{ $match: matchStage }];
@@ -130,6 +135,34 @@ client.connect().then(() => {
       });
     } catch (error) {
       console.error("Error in GET /api/products:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // GET /api/products/:slugOrId — Get Product Details
+  app.get("/api/products/:slugOrId", async (req, res) => {
+    try {
+      const { slugOrId } = req.params;
+      let query = { slug: slugOrId, isActive: true };
+      
+      // If slugOrId is a valid ObjectId, search by _id or slug
+      if (ObjectId.isValid(slugOrId)) {
+        query = {
+          $or: [
+            { _id: new ObjectId(slugOrId) },
+            { slug: slugOrId }
+          ],
+          isActive: true
+        };
+      }
+      
+      const product = await productsCollection.findOne(query);
+      if (!product) {
+        return res.status(404).send({ error: "Product not found" });
+      }
+      res.send(product);
+    } catch (error) {
+      console.error("Error in GET /api/products/:slugOrId:", error);
       res.status(500).send({ error: "Internal server error" });
     }
   });

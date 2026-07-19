@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }) {
         {/* Top Section: Images & Info */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-20">
           <div className="w-full lg:w-1/2">
-            <ImageGallery images={product.images} alt={product.name} />
+            <ImageGallery images={product.images} imageUrl={product.imageUrl} alt={product.name} />
           </div>
           
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
