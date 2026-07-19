@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://i.imgur.com/your-logo.png" alt="YourShop Logo" width="120" />
   <h1>YourShop - Agentic AI E-Commerce Platform</h1>
+  <h3>🌐 <a href="https://yourshop-topaz.vercel.app/">Live Demo</a></h3>
   <p>A next-generation, production-ready Full Stack AI application featuring an advanced Agentic Chat Assistant, Smart Recommendations, and a robust e-commerce architecture.</p>
 </div>
 
@@ -115,6 +115,3 @@ Built with performance, security, and exceptional user experience in mind, YourS
 
 ---
 
-<div align="center">
-  <p>Built with ❤️ for the future of e-commerce.</p>
-</div>
