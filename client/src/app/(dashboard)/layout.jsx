@@ -11,7 +11,10 @@ export default async function DashboardLayout({ children }) {
 
   return (
     <div className="bg-[#0A0F1E] text-white min-h-screen">
-      <DashboardNavbar>{children}</DashboardNavbar>
+      <DashboardNavbar />
+      <main className="md:pl-64 pb-16 md:pb-0">
+        {children}
+      </main>
     </div>
   );
 }

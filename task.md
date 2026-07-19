@@ -431,7 +431,7 @@ client/src/
 | 7 | Frontend: Navbar, Footer & Home Page | `[x]` |
 | 8 | Frontend: Shop & Product Detail | `[x]` |
 | 9 | Frontend: Auth Pages & Cart | `[x]` |
-| 10 | Frontend: Orders & Additional Pages | `[ ]` |
+| 10 | Frontend: Orders & Additional Pages | `[x]` |
 | 11 | Frontend: Admin Dashboard | `[ ]` |
 | 12 | Frontend: AI Chat Assistant | `[ ]` |
 

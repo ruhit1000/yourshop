@@ -1,3 +1,5 @@
+"use server";
+
 import { serverFetch, protectedFetch } from "../core/server";
 
 export const getProducts = async (searchParams = {}) => {

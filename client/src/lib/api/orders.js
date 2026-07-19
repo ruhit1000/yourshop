@@ -1,3 +1,5 @@
+"use server";
+
 import { protectedFetch } from "../core/server";
 
 export const getUserOrders = async (page = 1) => {

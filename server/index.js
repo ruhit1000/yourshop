@@ -560,6 +560,135 @@ client.connect().then(() => {
     }
   });
 
+  // GET /api/admin/orders — Admin: All Orders
+  app.get("/api/admin/orders", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const totalOrders = await ordersCollection.countDocuments();
+      const totalPages = Math.ceil(totalOrders / limit) || 1;
+
+      const orders = await ordersCollection.aggregate([
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: "user",
+            localField: "userId",
+            foreignField: "_id",
+            as: "customer"
+          }
+        },
+        { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 1,
+            totalCents: 1,
+            status: 1,
+            createdAt: 1,
+            "customer.name": 1,
+            "customer.email": 1
+          }
+        }
+      ]).toArray();
+
+      res.send({ orders, pagination: { totalItems: totalOrders, totalPages, currentPage: page, itemsPerPage: limit } });
+    } catch (error) {
+      console.error("Error in GET /api/admin/orders:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
+  // GET /api/admin/stats — Admin: Dashboard Stats
+  app.get("/api/admin/stats", verifyToken, verifyAdmin, async (req, res) => {
+    try {
+      // 1. Totals
+      const totalOrders = await ordersCollection.countDocuments();
+      const totalProducts = await productsCollection.countDocuments();
+      const totalCustomers = await userProfilesCollection.countDocuments();
+      
+      const revenueResult = await ordersCollection.aggregate([
+        { $match: { status: { $ne: "cancelled" } } },
+        { $group: { _id: null, total: { $sum: "$totalCents" } } }
+      ]).toArray();
+      const totalRevenueCents = revenueResult.length > 0 ? revenueResult[0].total : 0;
+
+      // 2. Recent Orders (top 5)
+      const recentOrders = await ordersCollection.aggregate([
+        { $sort: { createdAt: -1 } },
+        { $limit: 5 },
+        {
+          $lookup: {
+            from: "user",
+            localField: "userId",
+            foreignField: "_id",
+            as: "customer"
+          }
+        },
+        { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } },
+        {
+          $project: {
+            _id: 1,
+            totalCents: 1,
+            status: 1,
+            createdAt: 1,
+            "customer.name": 1,
+            "customer.email": 1
+          }
+        }
+      ]).toArray();
+
+      // 3. Low Stock Products (< 5)
+      const lowStockProducts = await productsCollection
+        .find({ stock: { $lt: 5 } })
+        .project({ name: 1, stock: 1, _id: 1, imageUrl: 1 })
+        .limit(10)
+        .toArray();
+
+      // 4. Chart Data
+      // Order statuses count
+      const statusDataRaw = await ordersCollection.aggregate([
+        { $group: { _id: "$status", count: { $sum: 1 } } }
+      ]).toArray();
+      const statusData = statusDataRaw.map(d => ({ name: d._id, count: d.count }));
+
+      // Revenue by date (last 7 days approx, grouped by day string)
+      const revenueDataRaw = await ordersCollection.aggregate([
+        { $match: { status: { $ne: "cancelled" } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            revenue: { $sum: "$totalCents" }
+          }
+        },
+        { $sort: { _id: 1 } },
+        { $limit: 7 }
+      ]).toArray();
+      const revenueData = revenueDataRaw.map(d => ({ date: d._id, revenue: d.revenue / 100 })); // convert cents to dollars for chart
+
+      res.send({
+        totals: {
+          orders: totalOrders,
+          revenueCents: totalRevenueCents,
+          products: totalProducts,
+          customers: totalCustomers
+        },
+        recentOrders,
+        lowStockProducts,
+        charts: {
+          statusData,
+          revenueData
+        }
+      });
+    } catch (error) {
+      console.error("Error in GET /api/admin/stats:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  });
+
   // GET /api/admin/customers — Admin: Customer Accounts
   app.get("/api/admin/customers", verifyToken, verifyAdmin, async (req, res) => {
     try {
