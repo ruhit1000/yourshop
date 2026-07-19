@@ -763,7 +763,7 @@ This JSON array should contain exactly 3 suggested follow-up questions the user 
       res.setHeader('Connection', 'keep-alive');
 
       const responseStream = await ai.models.generateContentStream({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.5-flash',
         contents,
         config: { systemInstruction }
       });

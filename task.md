@@ -350,47 +350,47 @@ client/src/
 
 > **Goal:** Fully functional admin shell using the `(dashboard)` route group pattern with `<AdminSidebar>` and all 5 admin pages.
 
-- [ ] Create `src/app/(dashboard)/layout.jsx`
-  - [ ] Server Component: calls `requireRole("admin")` from `session.js` — auto-redirects non-admins
-  - [ ] Renders `<DashboardNavbar>` (sidebar wrapper component)
-- [ ] Build `<DashboardNavbar />` (sidebar wrapper `src/components/Dashboard/DashboardNavbar.jsx`)
-  - [ ] Desktop: 240px fixed left sidebar, `hidden lg:flex`
-  - [ ] Mobile: `<AdminBottomTabs />` fixed bottom-bar, icon-only, `lg:hidden`
-  - [ ] 5 nav items using `usePathname()` for active state:
+- [x] Create `src/app/(dashboard)/layout.jsx`
+  - [x] Server Component: calls `requireRole("admin")` from `session.js` — auto-redirects non-admins
+  - [x] Renders `<DashboardNavbar>` (sidebar wrapper component)
+- [x] Build `<DashboardNavbar />` (sidebar wrapper `src/components/Dashboard/DashboardNavbar.jsx`)
+  - [x] Desktop: 240px fixed left sidebar, `hidden lg:flex`
+  - [x] Mobile: `<AdminBottomTabs />` fixed bottom-bar, icon-only, `lg:hidden`
+  - [x] 5 nav items using `usePathname()` for active state:
     - Overview (`LayoutDashboard` → `/admin`)
     - Products (`Package` → `/admin/products`)
     - Add Product (`PlusCircle` → `/admin/products/add`)
     - Orders (`ClipboardList` → `/admin/orders`)
     - Customers (`Users` → `/admin/customers`)
-  - [ ] Active state: `border-l-4 border-blue-500` (desktop), blue icon dot (mobile)
-  - [ ] Bottom: Logout button (red text)
-  - [ ] Passes `{children}` to main content area with `pl-60` on desktop, `pb-20` on mobile
-- [ ] Build Admin Overview Page (`src/app/(dashboard)/admin/page.js`)
-  - [ ] 4 stat cards: Total Orders, Revenue, Products, Customers
-  - [ ] `<OrderStatusChart />` — Recharts `BarChart`
-  - [ ] `<RevenueChart />` — Recharts `LineChart`
-  - [ ] Recent Orders mini-table (last 5) + "View All Orders" link
-  - [ ] Low Stock Alerts list (stock < 5)
-- [ ] Build Admin Products Page (`src/app/(dashboard)/admin/products/page.js`)
-  - [ ] `getProducts()` from `src/lib/api/products.js` (Server Component)
-  - [ ] Table: IMG, Name, Category, Price, Stock, Delete Action
-  - [ ] Delete calls `deleteProduct(id)` Server Action from `src/lib/actions/products.js`
-  - [ ] Low-stock rows: amber border; out-of-stock: red border
-  - [ ] `[+ Add New Product]` button → `/admin/products/add`
-  - [ ] Pagination
-- [ ] Build Admin Add Product Page (`src/app/(dashboard)/admin/products/add/page.js`)
-  - [ ] `react-hook-form` form: Name, Description, Category, Brand, Price, Stock, Tags, Image URL
-  - [ ] Submit calls `createProduct(data)` Server Action → success toast → redirect to `/admin/products`
-- [ ] Build Admin Orders Page (`src/app/(dashboard)/admin/orders/page.js`)
-  - [ ] `getAdminOrders()` from `src/lib/api/orders.js`
-  - [ ] Table: Order ID, Customer, Total, Status badge, Date
-  - [ ] Status filter dropdown
-  - [ ] `[Update]` → `<Modal />` with status dropdown → `updateOrderStatus` Server Action
-- [ ] Build Admin Customers Page (`src/app/(dashboard)/admin/customers/page.js`)
-  - [ ] `getAdminCustomers(page)` from `src/lib/api/customers.js`
-  - [ ] Table: Avatar, Display Name, Email, Role, Joined date
-  - [ ] Pagination
-- [ ] Push Batch 11 changes to GitHub
+  - [x] Active state: `border-l-4 border-blue-500` (desktop), blue icon dot (mobile)
+  - [x] Bottom: Logout button (red text)
+  - [x] Passes `{children}` to main content area with `pl-60` on desktop, `pb-20` on mobile
+- [x] Build Admin Overview Page (`src/app/(dashboard)/admin/page.js`)
+  - [x] 4 stat cards: Total Orders, Revenue, Products, Customers
+  - [x] `<OrderStatusChart />` — Recharts `BarChart`
+  - [x] `<RevenueChart />` — Recharts `LineChart`
+  - [x] Recent Orders mini-table (last 5) + "View All Orders" link
+  - [x] Low Stock Alerts list (stock < 5)
+- [x] Build Admin Products Page (`src/app/(dashboard)/admin/products/page.js`)
+  - [x] `getProducts()` from `src/lib/api/products.js` (Server Component)
+  - [x] Table: IMG, Name, Category, Price, Stock, Delete Action
+  - [x] Delete calls `deleteProduct(id)` Server Action from `src/lib/actions/products.js`
+  - [x] Low-stock rows: amber border; out-of-stock: red border
+  - [x] `[+ Add New Product]` button → `/admin/products/add`
+  - [x] Pagination
+- [x] Build Admin Add Product Page (`src/app/(dashboard)/admin/products/add/page.js`)
+  - [x] `react-hook-form` form: Name, Description, Category, Brand, Price, Stock, Tags, Image URL
+  - [x] Submit calls `createProduct(data)` Server Action → success toast → redirect to `/admin/products`
+- [x] Build Admin Orders Page (`src/app/(dashboard)/admin/orders/page.js`)
+  - [x] `getAdminOrders()` from `src/lib/api/orders.js`
+  - [x] Table: Order ID, Customer, Total, Status badge, Date
+  - [x] Status filter dropdown
+  - [x] `[Update]` → `<Modal />` with status dropdown → `updateOrderStatus` Server Action
+- [x] Build Admin Customers Page (`src/app/(dashboard)/admin/customers/page.js`)
+  - [x] `getAdminCustomers(page)` from `src/lib/api/customers.js`
+  - [x] Table: Avatar, Display Name, Email, Role, Joined date
+  - [x] Pagination
+- [x] Push Batch 11 changes to GitHub
 
 ---
 
@@ -398,23 +398,23 @@ client/src/
 
 > **Goal:** Streaming AI chat with live inventory awareness, multi-turn history, typing indicator, and suggested follow-up prompts.
 
-- [ ] Build Chat Page (`app/chat/page.js`) — protected
-  - [ ] `<ChatWindow />` — scrollable message list, auto-scrolls to latest
-  - [ ] `<MessageBubble />` — two variants: `user` (right-aligned, blue bg) and `model` (left-aligned, surface bg)
-  - [ ] `<TypingIndicator />` — 3 dots with staggered `animate-pulse` CSS animation, shown while streaming
-  - [ ] `<SuggestedPrompts />` — 3 clickable pill buttons below last model response; clicking auto-fills and sends the message
-  - [ ] `<ChatInput />` — text area + `Send →` button; submit on Enter (Shift+Enter for newline)
-  - [ ] Conversation history state: `useState([{ role, content }])`
-  - [ ] History capped at last 10 turns before each API call
-  - [ ] Opening welcome message from model on page load (no API call — hardcoded)
-- [ ] Implement streaming receive
-  - [ ] Call `POST /api/chat` with `{ message, history }`
-  - [ ] Read SSE / chunked response stream via `ReadableStream` Web API
-  - [ ] Append token chunks to the active model bubble as they arrive
-  - [ ] On stream complete: parse and strip `suggestedPrompts` JSON block from response text
-  - [ ] Render parsed prompts as `<SuggestedPrompts />` pill buttons
-- [ ] Push Batch 12 changes to GitHub
-- [ ] Update backend `POST /api/chat` to support streaming (`generateContentStream`) and inject suggested prompts JSON at end of each response
+- [x] Build Chat Page (`app/chat/page.js`) — protected
+  - [x] `<ChatWindow />` — scrollable message list, auto-scrolls to latest
+  - [x] `<MessageBubble />` — two variants: `user` (right-aligned, blue bg) and `model` (left-aligned, surface bg)
+  - [x] `<TypingIndicator />` — 3 dots with staggered `animate-pulse` CSS animation, shown while streaming
+  - [x] `<SuggestedPrompts />` — 3 clickable pill buttons below last model response; clicking auto-fills and sends the message
+  - [x] `<ChatInput />` — text area + `Send →` button; submit on Enter (Shift+Enter for newline)
+  - [x] Conversation history state: `useState([{ role, content }])`
+  - [x] History capped at last 10 turns before each API call
+  - [x] Opening welcome message from model on page load (no API call — hardcoded)
+- [x] Implement streaming receive
+  - [x] Call `POST /api/chat` with `{ message, history }`
+  - [x] Read SSE / chunked response stream via `ReadableStream` Web API
+  - [x] Append token chunks to the active model bubble as they arrive
+  - [x] On stream complete: parse and strip `suggestedPrompts` JSON block from response text
+  - [x] Render parsed prompts as `<SuggestedPrompts />` pill buttons
+- [x] Push Batch 12 changes to GitHub
+- [x] Update backend `POST /api/chat` to support streaming (`generateContentStream`) and inject suggested prompts JSON at end of each response
 
 ---
 
@@ -432,8 +432,8 @@ client/src/
 | 8 | Frontend: Shop & Product Detail | `[x]` |
 | 9 | Frontend: Auth Pages & Cart | `[x]` |
 | 10 | Frontend: Orders & Additional Pages | `[x]` |
-| 11 | Frontend: Admin Dashboard | `[ ]` |
-| 12 | Frontend: AI Chat Assistant | `[ ]` |
+| 11 | Frontend: Admin Dashboard | `[x]` |
+| 12 | Frontend: AI Chat Assistant | `[x]` |
 
 ---
 
