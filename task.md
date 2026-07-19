@@ -228,7 +228,7 @@ client/src/
   - [x] `<Modal />` — reusable overlay with close button and `{children}` slot
   - [x] `<Pagination />` — numbered pages + Prev/Next arrows, URL-synced
   - [x] `<AdminGuard />` — uses `requireRole("admin")` from `session.js`, redirects to `/login`
-- [ ] Push Batch 6 changes to GitHub
+- [x] Push Batch 6 changes to GitHub
 
 ---
 
@@ -236,29 +236,29 @@ client/src/
 
 > **Goal:** Fully functional landing page with all 9 sections, sticky navbar with all 3 auth states, and complete footer.
 
-- [ ] Build `<Navbar />`
-  - [ ] Logged-out: Home · Shop · About + Login / Register buttons
-  - [ ] Customer: Home · Shop · Orders · Chat · About + Cart badge + user dropdown (My Orders, Logout)
-  - [ ] Admin: All customer routes + Admin dropdown (Overview, Products, Add Product, Orders, Customers)
-  - [ ] Sticky with glassmorphism: `backdrop-blur-md bg-[#0A0F1E]/90`
-  - [ ] Cart badge animates (scale pulse) on item count change
-  - [ ] Mobile hamburger → full-screen slide-in drawer
-  - [ ] Active route: Electric Blue underline via `usePathname()`
-- [ ] Build `<Footer />`
-  - [ ] 5 columns: Brand + socials, Shop links, Company links, Support links, Contact info
-  - [ ] All links are internal `<Link>` components (no dead `href="#"`)
-  - [ ] Electric Blue top border, copyright line
-- [ ] Build Home Page (`app/page.js`) — 9 sections:
-  - [ ] `<HeroSection />` — 65vh, animated particle overlay, 3D-tilt rotating product showcase, two CTAs, scroll chevron
-  - [ ] `<CategoryLanes />` — 6 electronics categories, horizontal scroll mobile, 6-col desktop, hover glow
-  - [ ] `<FeaturedProducts />` — 4-card row, `GET /api/products?sort=newest&limit=8`, skeleton loaders
-  - [ ] `<FlashDeals />` — amber banner, countdown timer, horizontally scrolling deal cards with discount badge
-  - [ ] `<WhyChooseUs />` — 4 feature tiles (Lucide icons, animated), responsive grid
-  - [ ] `<StatsCounter />` — 4 counters animated with IntersectionObserver
-  - [ ] `<Testimonials />` — CSS scroll-snap carousel, 6 testimonial cards, amber star ratings
-  - [ ] `<Newsletter />` — Electric Blue gradient band, email input, animated envelope icon
-  - [ ] `<FaqAccordion />` — 6 electronics-relevant items, smooth Tailwind expand/collapse
-- [ ] Push Batch 7 changes to GitHub
+- [x] Build `<Navbar />`
+  - [x] Logged-out: Home · Shop · About + Login / Register buttons
+  - [x] Customer: Home · Shop · Orders · Chat · About + Cart badge + user dropdown (My Orders, Logout)
+  - [x] Admin: All customer routes + Admin dropdown (Overview, Products, Add Product, Orders, Customers)
+  - [x] Sticky with glassmorphism: `backdrop-blur-md bg-[#0A0F1E]/90`
+  - [x] Cart badge animates (scale pulse) on item count change
+  - [x] Mobile hamburger → full-screen slide-in drawer
+  - [x] Active route: Electric Blue underline via `usePathname()`
+- [x] Build `<Footer />`
+  - [x] 5 columns: Brand + socials, Shop links, Company links, Support links, Contact info
+  - [x] All links are internal `<Link>` components (no dead `href="#"`)
+  - [x] Electric Blue top border, copyright line
+- [x] Build Home Page (`app/page.js`) — 9 sections:
+  - [x] `<HeroSection />` — 65vh, animated particle overlay, 3D-tilt rotating product showcase, two CTAs, scroll chevron
+  - [x] `<CategoryLanes />` — 6 electronics categories, horizontal scroll mobile, 6-col desktop, hover glow
+  - [x] `<FeaturedProducts />` — 4-card row, `GET /api/products?sort=newest&limit=8`, skeleton loaders
+  - [x] `<FlashDeals />` — amber banner, countdown timer, horizontally scrolling deal cards with discount badge
+  - [x] `<WhyChooseUs />` — 4 feature tiles (Lucide icons, animated), responsive grid
+  - [x] `<StatsCounter />` — 4 counters animated with IntersectionObserver
+  - [x] `<Testimonials />` — CSS scroll-snap carousel, 6 testimonial cards, amber star ratings
+  - [x] `<Newsletter />` — Electric Blue gradient band, email input, animated envelope icon
+  - [x] `<FaqAccordion />` — 6 electronics-relevant items, smooth Tailwind expand/collapse
+- [ ] Push Batch 7 changes to GitHub (take permission before you push the code)
 
 ---
 
@@ -428,7 +428,7 @@ client/src/
 | 4 | Backend: Checkout & Orders API | `[x]` |
 | 5 | Backend: Customers & AI Chat | `[x]` |
 | 6 | Frontend: Project Foundation & Design System | `[x]` |
-| 7 | Frontend: Navbar, Footer & Home Page | `[ ]` |
+| 7 | Frontend: Navbar, Footer & Home Page | `[x]` |
 | 8 | Frontend: Shop & Product Detail | `[ ]` |
 | 9 | Frontend: Auth Pages & Cart | `[ ]` |
 | 10 | Frontend: Orders & Additional Pages | `[ ]` |
