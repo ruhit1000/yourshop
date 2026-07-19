@@ -479,10 +479,23 @@ client.connect().then(() => {
   app.get("/api/orders", verifyToken, async (req, res) => {
     try {
       const userId = req.user._id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+      const skip = (page - 1) * limit;
+
+      const totalOrders = await ordersCollection.countDocuments({ userId: userId });
       const orders = await ordersCollection.find({ userId: userId })
                                            .sort({ createdAt: -1 })
+                                           .skip(skip)
+                                           .limit(limit)
                                            .toArray();
-      res.send(orders);
+
+      res.send({
+        orders,
+        totalPages: Math.ceil(totalOrders / limit),
+        currentPage: page,
+        totalOrders
+      });
     } catch (error) {
       console.error("Error in GET /api/orders:", error);
       res.status(500).send({ error: "Internal server error" });

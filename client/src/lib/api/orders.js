@@ -1,7 +1,7 @@
 import { protectedFetch } from "../core/server";
 
-export const getUserOrders = async () => {
-  return protectedFetch("orders");
+export const getUserOrders = async (page = 1) => {
+  return protectedFetch(`orders?page=${page}`);
 };
 
 export const getOrderById = async (id) => {
