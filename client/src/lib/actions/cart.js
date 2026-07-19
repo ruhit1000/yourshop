@@ -1,6 +1,18 @@
 "use server";
 
-import { serverMutation } from "../core/server";
+import { serverMutation, protectedFetch } from "../core/server";
+
+export async function getCartCount() {
+  try {
+    const data = await protectedFetch("cart");
+    if (!data || data.error || data.message) return 0;
+    const items = data.items || [];
+    return items.reduce((acc, item) => acc + item.quantity, 0);
+  } catch (error) {
+    console.error("Failed to get cart count:", error);
+    return 0;
+  }
+}
 
 export async function updateCartItem(productId, quantity) {
   try {

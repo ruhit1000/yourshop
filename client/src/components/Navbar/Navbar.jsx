@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import { ShoppingCart, Menu, X, User, ChevronDown, Package, Settings, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { getCartCount } from "@/lib/actions/cart";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -14,16 +15,32 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  // Mock cart items count for now
   const [cartItemsCount, setCartItemsCount] = useState(0);
 
   useEffect(() => {
+    const updateCount = async () => {
+      if (user) {
+        const count = await getCartCount();
+        setCartItemsCount(count);
+      } else {
+        setCartItemsCount(0);
+      }
+    };
+
+    updateCount();
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("cart-updated", updateCount);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("cart-updated", updateCount);
+    };
+  }, [user]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -98,7 +115,7 @@ export default function Navbar() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      className="absolute top-0 right-0 w-5 h-5 bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0F1E]"
+                      className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-[#0A0F1E]"
                     >
                       {cartItemsCount}
                     </motion.span>

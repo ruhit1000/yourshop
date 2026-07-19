@@ -24,7 +24,7 @@ client.connect().then(() => {
 
   const db = client.db("yourshop_db");
   const productsCollection = db.collection("products");
-  const userProfilesCollection = db.collection("userProfiles");
+  const userProfilesCollection = db.collection("user");
   const cartsCollection = db.collection("carts");
   const ordersCollection = db.collection("orders");
   const sessionCollection = db.collection("session"); // Assuming Better Auth uses this

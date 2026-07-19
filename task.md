@@ -430,7 +430,7 @@ client/src/
 | 6 | Frontend: Project Foundation & Design System | `[x]` |
 | 7 | Frontend: Navbar, Footer & Home Page | `[x]` |
 | 8 | Frontend: Shop & Product Detail | `[x]` |
-| 9 | Frontend: Auth Pages & Cart | `[ ]` |
+| 9 | Frontend: Auth Pages & Cart | `[x]` |
 | 10 | Frontend: Orders & Additional Pages | `[ ]` |
 | 11 | Frontend: Admin Dashboard | `[ ]` |
 | 12 | Frontend: AI Chat Assistant | `[ ]` |

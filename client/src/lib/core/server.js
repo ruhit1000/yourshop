@@ -37,7 +37,11 @@ export const serverMutation = async (path, method, data) => {
     },
     body: JSON.stringify(data),
   });
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || json.message || "Request failed");
+  }
+  return json;
 };
 
 // Protected DELETE

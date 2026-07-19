@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Plus, Minus, ShoppingBag, Loader2 } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, Loader2, Lock } from "lucide-react";
 import { updateCartItem } from "@/lib/actions/cart";
 
 export default function CartClient({ initialCart }) {
@@ -31,6 +31,8 @@ export default function CartClient({ initialCart }) {
     const res = await updateCartItem(productId, newQty);
     if (!res.success) {
       alert(res.error || "Failed to update cart");
+    } else {
+      window.dispatchEvent(new Event("cart-updated"));
     }
     setIsProcessing(false);
     router.refresh();

@@ -35,6 +35,7 @@ export default function AddToCartSection({ product }) {
       const res = await addToCart(product._id, quantity);
       if (!res.success) throw new Error(res.error || "Failed to add to cart");
       setStatus("success");
+      window.dispatchEvent(new Event("cart-updated"));
       setTimeout(() => setStatus("idle"), 3000);
     } catch (err) {
       console.error(err);
