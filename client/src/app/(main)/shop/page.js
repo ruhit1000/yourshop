@@ -4,6 +4,7 @@ import FilterSidebar from "@/components/Shop/FilterSidebar";
 import SortDropdown from "@/components/Shop/SortDropdown";
 import ProductGrid from "@/components/Shop/ProductGrid";
 import Pagination from "@/components/shared/Pagination";
+import ProductSkeleton from "@/components/Shop/ProductSkeleton";
 import { getProducts } from "@/lib/api/products";
 
 export const metadata = {
@@ -60,7 +61,13 @@ export default async function ShopPage({ searchParams }) {
             </div>
 
             {/* Product Grid */}
-            <Suspense fallback={<div className="text-white">Loading...</div>}>
+            <Suspense fallback={
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <ProductSkeleton key={i} />
+                ))}
+              </div>
+            }>
               <ProductGrid products={products} />
             </Suspense>
 

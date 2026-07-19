@@ -438,3 +438,11 @@ client/src/
 ---
 
 *Tick off tasks as each item completes. Review summary table after each batch before moving on.*
+
+## Future Improvements (V2 Roadmap)
+- [ ] **Dynamic Multiple Images:** Update the MongoDB Product schema to natively support an `images` array (upload multiple files via the Admin dashboard) and bind the product detail gallery to this dynamic data instead of the static fallback.
+- [ ] **AI Semantic Search:** Enhance the search bar using vector embeddings to allow users to search using natural language (e.g., "something good for taking photos on vacation") instead of exact keyword matching.
+- [ ] **User Cart & Checkout Flow:** Implement a fully functional cart state (Redux/Zustand) and integrate a payment gateway like Stripe for processing real orders.
+- [ ] **Order Tracking System:** Create a real-time order tracking dashboard for customers, leveraging webhooks to update shipping statuses.
+- [ ] **Admin Analytics Dashboard:** Add advanced Recharts visualizations for revenue over time, popular categories, and AI-driven insights on user behavior.
+- [ ] **User Reviews & Ratings Integration:** Allow authenticated users to leave reviews and calculate average ratings dynamically.

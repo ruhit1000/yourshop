@@ -44,7 +44,15 @@ export default async function ProductDetailPage({ params }) {
         {/* Top Section: Images & Info */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-20">
           <div className="w-full lg:w-1/2">
-            <ImageGallery images={product.images} imageUrl={product.imageUrl} alt={product.name} />
+            <ImageGallery 
+              images={product.images?.length > 0 ? product.images : [
+                product.imageUrl,
+                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
+                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800"
+              ].filter(Boolean)} 
+              imageUrl={product.imageUrl} 
+              alt={product.name} 
+            />
           </div>
           
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
