@@ -305,7 +305,7 @@ client/src/
 - [ ] Build Register Page (`src/app/(main)/register/page.js`)
   - [ ] Display Name · Email · Password · Confirm Password inputs via `react-hook-form`
   - [ ] Real-time password strength indicator bar
-  - [ ] Validation: min 8 chars, 1 uppercase, 1 number, passwords match
+  - [ ] Validation: min 8 chars, passwords match
   - [ ] `Create Account` amber button
   - [ ] Link to `/login`
 - [ ] Build Cart Page (`src/app/(main)/cart/page.js`) — protected (`requireRole` check)

@@ -1,16 +1,16 @@
 "use server";
 
 import { serverMutation } from "../core/server";
-import { revalidatePath } from "next/cache";
 
-export const addToCart = async (productId, quantity = 1) => {
-  const result = await serverMutation("cart", "POST", { productId, quantity });
-  revalidatePath("/cart");
-  return result;
-};
-
-export const updateCartItem = async (productId, quantity) => {
-  const result = await serverMutation("cart", "PATCH", { productId, quantity });
-  revalidatePath("/cart");
-  return result;
-};
+export async function updateCartItem(productId, quantity) {
+  try {
+    const data = await serverMutation("cart", "PATCH", {
+      productId,
+      quantity,
+    });
+    return { success: true, data };
+  } catch (error) {
+    console.error("Failed to update cart item:", error);
+    return { success: false, error: "Failed to update cart item" };
+  }
+}
