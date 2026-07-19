@@ -105,7 +105,7 @@ export default function AboutPage() {
       <section className="bg-white/[0.02] border-y border-white/5 py-20 mb-24">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl font-bold text-center mb-16">The Journey</h2>
-          <div className="flex flex-col md:flex-row gap-8 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          <div className="flex flex-col md:flex-row gap-8 overflow-x-auto pt-6 pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
             {TIMELINE.map((item, idx) => (
               <div
                 key={idx}
