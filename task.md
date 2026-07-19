@@ -258,7 +258,7 @@ client/src/
   - [x] `<Testimonials />` — CSS scroll-snap carousel, 6 testimonial cards, amber star ratings
   - [x] `<Newsletter />` — Electric Blue gradient band, email input, animated envelope icon
   - [x] `<FaqAccordion />` — 6 electronics-relevant items, smooth Tailwind expand/collapse
-- [ ] Push Batch 7 changes to GitHub (take permission before you push the code)
+- [x] Push Batch 7 changes to GitHub (take permission before you push the code)
 
 ---
 
@@ -266,29 +266,29 @@ client/src/
 
 > **Goal:** Fully functional explore experience with 4 filters, URL-synced state, skeleton loaders, and a rich product detail page.
 
-- [ ] Build Shop Page (`app/shop/page.js`)
-  - [ ] `<SearchBar />` — debounced 300ms, syncs to `?q=` URL param
-  - [ ] `<FilterSidebar />`
-    - [ ] `<CategoryFilter />` — multi-select checkboxes, syncs to `?category=`
-    - [ ] `<PriceRangeSlider />` — dual-handle slider, syncs to `?minPrice=&maxPrice=`
-    - [ ] `<StockToggle />` — in-stock-only toggle, client-side post-filter
-  - [ ] `<SortDropdown />` — `price_asc`, `price_desc`, `newest`, `name_asc`, syncs to `?sort=`
-  - [ ] `<ProductGrid />` — 4/2/1 col grid, maps `<ProductCard>` or `<SkeletonCard>` while loading
-  - [ ] `<Pagination />` — URL-synced, `keepPreviousData: true` TanStack Query
-  - [ ] `<LazyLoader />` — Infinite scroll / intersection observer, `useInfiniteQuery` with TanStack Query
-  - [ ] Filter sidebar collapses to slide-up bottom sheet on mobile
-  - [ ] All filters shareable/bookmarkable via URL query string
-- [ ] Build Product Detail Page (`app/products/[slug]/page.js`)
-  - [ ] `<ImageGallery />` — main display + thumbnail strip, click-to-swap
-  - [ ] `<ProductInfo />` — category tag, name, star rating, price (amber), stock count
-  - [ ] `<QuantitySelector />` — `[−] [qty] [+]` with min 1, max stock guards
-  - [ ] `<AddToCartButton />` — calls `POST /api/cart`, invalidates cart query, shows toast; disabled + "Out of Stock" badge if `stock === 0`
-  - [ ] `<ProductDescription />` — full description tab section
-  - [ ] `<SpecificationsTable />` — key-value table (brand, model, connectivity, etc.)
-  - [ ] `<ReviewsSection />` — star distribution bar + 4 seeded review cards
-  - [ ] `<RelatedProducts />` — `GET /api/products?category=X&limit=4`, 4-card row
-  - [ ] Hover prefetch on product cards via `queryClient.prefetchQuery()`
-- [ ] Push Batch 8 changes to GitHub
+- [x] Build Shop Page (`app/shop/page.js`)
+  - [x] `<SearchBar />` — debounced 300ms, syncs to `?q=` URL param
+  - [x] `<FilterSidebar />`
+    - [x] `<CategoryFilter />` — multi-select checkboxes, syncs to `?category=`
+    - [x] `<PriceRangeSlider />` — dual-handle slider, syncs to `?minPrice=&maxPrice=`
+    - [x] `<StockToggle />` — in-stock-only toggle, client-side post-filter
+  - [x] `<SortDropdown />` — `price_asc`, `price_desc`, `newest`, `name_asc`, syncs to `?sort=`
+  - [x] `<ProductGrid />` — 4/2/1 col grid, maps `<ProductCard>` or `<SkeletonCard>` while loading
+  - [x] `<Pagination />` — URL-synced, `keepPreviousData: true` TanStack Query
+  - [x] `<LazyLoader />` — Infinite scroll / intersection observer, `useInfiniteQuery` with TanStack Query
+  - [x] Filter sidebar collapses to slide-up bottom sheet on mobile
+  - [x] All filters shareable/bookmarkable via URL query string
+- [x] Build Product Detail Page (`app/products/[slug]/page.js`)
+  - [x] `<ImageGallery />` — main display + thumbnail strip, click-to-swap
+  - [x] `<ProductInfo />` — category tag, name, star rating, price (amber), stock count
+  - [x] `<QuantitySelector />` — `[−] [qty] [+]` with min 1, max stock guards
+  - [x] `<AddToCartButton />` — calls `POST /api/cart`, invalidates cart query, shows toast; disabled + "Out of Stock" badge if `stock === 0`
+  - [x] `<ProductDescription />` — full description tab section
+  - [x] `<SpecificationsTable />` — key-value table (brand, model, connectivity, etc.)
+  - [x] `<ReviewsSection />` — star distribution bar + 4 seeded review cards
+  - [x] `<RelatedProducts />` — `GET /api/products?category=X&limit=4`, 4-card row
+  - [x] Hover prefetch on product cards via `queryClient.prefetchQuery()`
+- [x] Push Batch 8 changes to GitHub
 
 ---
 
@@ -429,7 +429,7 @@ client/src/
 | 5 | Backend: Customers & AI Chat | `[x]` |
 | 6 | Frontend: Project Foundation & Design System | `[x]` |
 | 7 | Frontend: Navbar, Footer & Home Page | `[x]` |
-| 8 | Frontend: Shop & Product Detail | `[ ]` |
+| 8 | Frontend: Shop & Product Detail | `[x]` |
 | 9 | Frontend: Auth Pages & Cart | `[ ]` |
 | 10 | Frontend: Orders & Additional Pages | `[ ]` |
 | 11 | Frontend: Admin Dashboard | `[ ]` |

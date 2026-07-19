@@ -1,7 +1,7 @@
 import { serverFetch, protectedFetch } from "../core/server";
 
 export const getProducts = async (searchParams = {}) => {
-  const query = new URLSearchParams({ limit: "30" });
+  const query = new URLSearchParams({ limit: "18" });
   if (searchParams.q) query.append("q", searchParams.q);
   if (searchParams.category) query.append("category", searchParams.category);
   if (searchParams.minPrice) query.append("minPrice", searchParams.minPrice);

@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
+import { IoLogoFacebook, IoLogoTwitter } from "react-icons/io5";
+import { AiFillInstagram } from "react-icons/ai";
+import { FaYoutube } from "react-icons/fa";
+
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -19,16 +23,16 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-white/10 transition-colors">
-                <Facebook size={18} />
+                <IoLogoFacebook size={18} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-white/10 transition-colors">
-                <Twitter size={18} />
+                <IoLogoTwitter size={18} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-pink-500 hover:bg-white/10 transition-colors">
-                <Instagram size={18} />
+                <AiFillInstagram size={18} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white/10 transition-colors">
-                <Youtube size={18} />
+                <FaYoutube size={18} />
               </a>
             </div>
           </div>
