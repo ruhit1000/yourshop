@@ -61,16 +61,28 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, { role: "model", text: "" }]);
 
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: text.trim(), history }),
+      const tokenRes = await fetch("/api/auth/get-session", {
+        credentials: "include",
       });
+      const tokenData = await tokenRes.json();
+      const token = tokenData?.session?.token;
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ message: text.trim(), history }),
+        }
+      );
 
       if (!res.ok) {
-        throw new Error("Chat request failed");
+        const errText = await res.text();
+        console.error("Chat request failed with status:", res.status, "and body:", errText);
+        throw new Error("Chat request failed: " + errText);
       }
 
       const reader = res.body.getReader();
