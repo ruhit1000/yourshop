@@ -13,6 +13,7 @@ export default function AdminOrdersPage() {
   const [editingOrder, setEditingOrder] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchOrders = async (page) => {
     setLoading(true);
@@ -54,6 +55,12 @@ export default function AdminOrdersPage() {
     }).format(cents / 100);
   };
 
+  const filteredOrders = orders.filter(o => 
+    o._id.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (o.customer?.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (o.customer?.email || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -70,6 +77,8 @@ export default function AdminOrdersPage() {
             <input 
               type="text"
               placeholder="Search orders..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-zinc-800 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -94,14 +103,14 @@ export default function AdminOrdersPage() {
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                   </td>
                 </tr>
-              ) : orders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-8 text-center text-zinc-500">
-                    No orders found.
+                    No orders found matching your search.
                   </td>
                 </tr>
               ) : (
-                orders.map((order) => (
+                filteredOrders.map((order) => (
                   <tr key={order._id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/50 transition-colors">
                     <td className="px-6 py-4 font-medium font-mono text-zinc-400">
                       {order._id.slice(-8)}

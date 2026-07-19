@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { LayoutDashboard, Package, PlusCircle, ShoppingCart, Users, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, PlusCircle, ShoppingCart, Users, LogOut, Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
@@ -57,10 +57,17 @@ export default function DashboardNavbar() {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors w-full"
+          >
+            <Home size={20} />
+            Go to Store
+          </Link>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors w-full"
           >
             <LogOut size={20} />
             Logout
@@ -86,6 +93,14 @@ export default function DashboardNavbar() {
             </Link>
           );
         })}
+        <Link href="/" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors">
+          <Home size={20} />
+          <span className="text-[10px] font-medium">Store</span>
+        </Link>
+        <button onClick={handleLogout} className="flex flex-col items-center gap-1 text-red-500 hover:text-red-400 transition-colors">
+          <LogOut size={20} />
+          <span className="text-[10px] font-medium">Logout</span>
+        </button>
       </div>
     </>
   );

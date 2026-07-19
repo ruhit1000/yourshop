@@ -701,7 +701,7 @@ client.connect().then(() => {
 
       const customers = await userProfilesCollection
         .find({})
-        .project({ email: 1, displayName: 1, avatarUrl: 1, role: 1, createdAt: 1 })
+        .project({ email: 1, name: 1, image: 1, role: 1, createdAt: 1 })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)

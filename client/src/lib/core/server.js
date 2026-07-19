@@ -53,5 +53,12 @@ export const serverDelete = async (path) => {
       ...(await authHeader()),
     },
   });
-  return res.json();
+  
+  if (res.status === 204) return { success: true };
+  
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || json.message || "Delete failed");
+  }
+  return json;
 };

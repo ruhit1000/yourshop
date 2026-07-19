@@ -9,6 +9,7 @@ export default function AdminCustomersPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchCustomers = async (page) => {
     setLoading(true);
@@ -27,6 +28,11 @@ export default function AdminCustomersPage() {
     fetchCustomers(page);
   }, [page]);
 
+  const filteredCustomers = customers.filter(c => 
+    (c.name || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (c.email || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -43,6 +49,8 @@ export default function AdminCustomersPage() {
             <input 
               type="text"
               placeholder="Search customers..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-zinc-800 border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -64,26 +72,26 @@ export default function AdminCustomersPage() {
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                   </td>
                 </tr>
-              ) : customers.length === 0 ? (
+              ) : filteredCustomers.length === 0 ? (
                 <tr>
                   <td colSpan="3" className="px-6 py-8 text-center text-zinc-500">
-                    No customers found.
+                    No customers found matching your search.
                   </td>
                 </tr>
               ) : (
-                customers.map((customer) => (
+                filteredCustomers.map((customer) => (
                   <tr key={customer._id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium shrink-0 overflow-hidden">
-                          {customer.avatarUrl ? (
-                            <img src={customer.avatarUrl} alt={customer.displayName || customer.name} className="h-full w-full object-cover" />
+                          {customer.image ? (
+                            <img src={customer.image} alt={customer.name} className="h-full w-full object-cover" />
                           ) : (
-                            (customer.displayName || customer.name || customer.email || "U").charAt(0).toUpperCase()
+                            (customer.name || customer.email || "U").charAt(0).toUpperCase()
                           )}
                         </div>
                         <div>
-                          <p className="font-medium">{customer.displayName || customer.name || "Unknown User"}</p>
+                          <p className="font-medium">{customer.name || "Unknown User"}</p>
                           <p className="text-xs text-zinc-500">{customer.email}</p>
                         </div>
                       </div>

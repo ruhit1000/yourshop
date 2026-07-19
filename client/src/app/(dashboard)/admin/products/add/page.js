@@ -94,18 +94,11 @@ export default function AddProductPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-1.5">Category</label>
-                <select
+                <input
                   {...register("category", { required: "Category is required" })}
-                  className="w-full bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none capitalize"
-                >
-                  <option value="">Select Category</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="books">Books</option>
-                  <option value="home">Home & Kitchen</option>
-                  <option value="sports">Sports</option>
-                  <option value="beauty">Beauty</option>
-                </select>
+                  className="w-full bg-zinc-800 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="e.g. Electronics"
+                />
                 {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
               </div>
 
