@@ -242,7 +242,7 @@ client.connect().then(() => {
       const userId = req.user._id;
       
       const pipeline = [
-        { $match: { userId: new ObjectId(userId) } },
+        { $match: { userId: userId } },
         { $unwind: { path: "$items", preserveNullAndEmptyArrays: true } },
         {
           $lookup: {
@@ -284,7 +284,7 @@ client.connect().then(() => {
       if (!cart) {
         // If aggregation matched no active products but cart exists, 
         // or user has no cart, fetch fallback.
-        cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+        cart = await cartsCollection.findOne({ userId: userId });
         if (!cart) {
           cart = { userId, items: [], createdAt: new Date(), updatedAt: new Date() };
         } else {
@@ -324,13 +324,13 @@ client.connect().then(() => {
         return res.status(404).send({ error: "Product not found or inactive" });
       }
       
-      const cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+      const cart = await cartsCollection.findOne({ userId: userId });
       
       if (cart) {
         const itemExists = cart.items.find(item => item.productId.toString() === productId);
         if (itemExists) {
           await cartsCollection.updateOne(
-            { userId: new ObjectId(userId), "items.productId": new ObjectId(productId) },
+            { userId: userId, "items.productId": new ObjectId(productId) },
             { 
               $inc: { "items.$.quantity": quantity },
               $set: { updatedAt: new Date() }
@@ -338,7 +338,7 @@ client.connect().then(() => {
           );
         } else {
           await cartsCollection.updateOne(
-            { userId: new ObjectId(userId) },
+            { userId: userId },
             { 
               $push: { items: { productId: new ObjectId(productId), quantity, addedAt: new Date() } },
               $set: { updatedAt: new Date() }
@@ -347,7 +347,7 @@ client.connect().then(() => {
         }
       } else {
         await cartsCollection.insertOne({
-          userId: new ObjectId(userId),
+          userId: userId,
           items: [{ productId: new ObjectId(productId), quantity, addedAt: new Date() }],
           createdAt: new Date(),
           updatedAt: new Date()
@@ -376,7 +376,7 @@ client.connect().then(() => {
       
       if (quantity === 0) {
         await cartsCollection.updateOne(
-          { userId: new ObjectId(userId) },
+          { userId: userId },
           { 
             $pull: { items: { productId: new ObjectId(productId) } },
             $set: { updatedAt: new Date() }
@@ -384,7 +384,7 @@ client.connect().then(() => {
         );
       } else {
         await cartsCollection.updateOne(
-          { userId: new ObjectId(userId), "items.productId": new ObjectId(productId) },
+          { userId: userId, "items.productId": new ObjectId(productId) },
           { 
             $set: { 
               "items.$.quantity": quantity,
@@ -410,7 +410,7 @@ client.connect().then(() => {
     try {
       const userId = req.user._id;
       
-      const cart = await cartsCollection.findOne({ userId: new ObjectId(userId) });
+      const cart = await cartsCollection.findOne({ userId: userId });
       if (!cart || !cart.items || cart.items.length === 0) {
         return res.status(400).send({ error: "Cart is empty" });
       }
@@ -446,7 +446,7 @@ client.connect().then(() => {
       }
       
       const newOrder = {
-        userId: new ObjectId(userId),
+        userId: userId,
         items: orderItems,
         totalCents: orderTotal,
         status: "processing",
@@ -466,7 +466,7 @@ client.connect().then(() => {
       }
       
       // Clear cart
-      await cartsCollection.deleteOne({ userId: new ObjectId(userId) });
+      await cartsCollection.deleteOne({ userId: userId });
       
       res.status(201).send({ _id: orderResult.insertedId, message: "Order placed successfully" });
     } catch (error) {
@@ -479,7 +479,7 @@ client.connect().then(() => {
   app.get("/api/orders", verifyToken, async (req, res) => {
     try {
       const userId = req.user._id;
-      const orders = await ordersCollection.find({ userId: new ObjectId(userId) })
+      const orders = await ordersCollection.find({ userId: userId })
                                            .sort({ createdAt: -1 })
                                            .toArray();
       res.send(orders);
@@ -501,7 +501,7 @@ client.connect().then(() => {
       
       const query = { _id: new ObjectId(orderId) };
       if (req.user.role !== "admin") {
-        query.userId = new ObjectId(userId);
+        query.userId = userId;
       }
       
       const order = await ordersCollection.findOne(query);

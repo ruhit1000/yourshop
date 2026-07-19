@@ -32,13 +32,14 @@ export default function AddToCartSection({ product }) {
     
     setStatus("loading");
     try {
-      await addToCart(product._id, quantity);
+      const res = await addToCart(product._id, quantity);
+      if (!res.success) throw new Error(res.error || "Failed to add to cart");
       setStatus("success");
       setTimeout(() => setStatus("idle"), 3000);
     } catch (err) {
       console.error(err);
       setStatus("idle");
-      alert("Failed to add to cart");
+      alert(err.message || "Failed to add to cart");
     }
   };
 

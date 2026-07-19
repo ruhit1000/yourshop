@@ -28,7 +28,10 @@ export default function CartClient({ initialCart }) {
     setCart({ ...cart, items: updatedItems, cartTotal: newTotal });
     
     // Server update
-    await updateCartItem(productId, newQty);
+    const res = await updateCartItem(productId, newQty);
+    if (!res.success) {
+      alert(res.error || "Failed to update cart");
+    }
     setIsProcessing(false);
     router.refresh();
   };

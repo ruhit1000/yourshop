@@ -296,31 +296,31 @@ client/src/
 
 > **Goal:** Login, register, demo login button, the full cart flow, and Stripe-powered checkout (sandbox/test mode).
 
-- [ ] Build Login Page (`src/app/(main)/login/page.js`)
-  - [ ] Email + Password inputs with inline validation via `react-hook-form`
-  - [ ] `Login` button (amber, full-width) — calls `signIn` from `auth-client.js`
-  - [ ] **Demo Login button** — auto-fills `demo@yourshop.com` / `Demo@123` and submits
-  - [ ] Link to `/register`
-  - [ ] Error messages displayed inline (no alert popups)
-- [ ] Build Register Page (`src/app/(main)/register/page.js`)
-  - [ ] Display Name · Email · Password · Confirm Password inputs via `react-hook-form`
-  - [ ] Real-time password strength indicator bar
-  - [ ] Validation: min 8 chars, passwords match
-  - [ ] `Create Account` amber button
-  - [ ] Link to `/login`
-- [ ] Build Cart Page (`src/app/(main)/cart/page.js`) — protected (`requireRole` check)
-  - [ ] `getUserCart()` from `src/lib/api/cart.js` (Server Component fetch)
-  - [ ] `<CartItem />` per line: image, name, price, `[−][qty][+]` → `updateCartItem` Server Action, trash → quantity: 0
-  - [ ] `<OrderSummary />` — subtotal, shipping (Free), total
-  - [ ] `Proceed to Checkout` button → calls Next.js API Route `POST /api/payment` which creates Stripe Checkout Session
-  - [ ] Stripe redirects user to hosted checkout page (sandbox mode, test card `4242 4242 4242 4242`)
-  - [ ] Empty cart state: illustration + "Continue Shopping" link
-- [ ] Build Checkout Success Page (`src/app/(main)/checkout/success/page.js`)
-  - [ ] Reads `session_id` from URL query param
-  - [ ] Calls `POST /api/checkout` on our Express server to create the order in MongoDB
-  - [ ] Shows order confirmation summary (orderId, total, status: processing)
-  - [ ] "View My Orders" and "Continue Shopping" CTAs
-- [ ] Push Batch 9 changes to GitHub
+- [x] Build Login Page (`src/app/(main)/login/page.js`)
+  - [x] Email + Password inputs with inline validation via `react-hook-form`
+  - [x] `Login` button (amber, full-width) — calls `signIn` from `auth-client.js`
+  - [x] **Demo Login button** — auto-fills `demo@yourshop.com` / `Demo@123` and submits
+  - [x] Link to `/register`
+  - [x] Error messages displayed inline (no alert popups)
+- [x] Build Register Page (`src/app/(main)/register/page.js`)
+  - [x] Display Name · Email · Password · Confirm Password inputs via `react-hook-form`
+  - [x] Real-time password strength indicator bar
+  - [x] Validation: min 8 chars, passwords match
+  - [x] `Create Account` amber button
+  - [x] Link to `/login`
+- [x] Build Cart Page (`src/app/(main)/cart/page.js`) — protected (`requireRole` check)
+  - [x] `getUserCart()` from `src/lib/api/cart.js` (Server Component fetch)
+  - [x] `<CartItem />` per line: image, name, price, `[−][qty][+]` → `updateCartItem` Server Action, trash → quantity: 0
+  - [x] `<OrderSummary />` — subtotal, shipping (Free), total
+  - [x] `Proceed to Checkout` button → calls Next.js API Route `POST /api/payment` which creates Stripe Checkout Session
+  - [x] Stripe redirects user to hosted checkout page (sandbox mode, test card `4242 4242 4242 4242`)
+  - [x] Empty cart state: illustration + "Continue Shopping" link
+- [x] Build Checkout Success Page (`src/app/(main)/checkout/success/page.js`)
+  - [x] Reads `session_id` from URL query param
+  - [x] Calls `POST /api/checkout` on our Express server to create the order in MongoDB
+  - [x] Shows order confirmation summary (orderId, total, status: processing)
+  - [x] "View My Orders" and "Continue Shopping" CTAs
+- [x] Push Batch 9 changes to GitHub
 
 ---
 
