@@ -11,7 +11,7 @@ export const getProducts = async (searchParams = {}) => {
   return serverFetch(`products?${query.toString()}`);
 };
 
-export const getProductBySlug = async (slug) => {
+export const getProduct = async (slug) => {
   return serverFetch(`products/${slug}`);
 };
 

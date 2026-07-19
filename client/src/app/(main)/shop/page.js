@@ -23,7 +23,7 @@ export default async function ShopPage({ searchParams }) {
   try {
     const data = await getProducts(resolvedParams);
     products = data?.products || [];
-    totalPages = data?.pagination?.totalPages || 1;
+    totalPages = data?.meta?.totalPages || 1;
   } catch (err) {
     console.error("Failed to load products", err);
   }
