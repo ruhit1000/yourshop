@@ -154,26 +154,81 @@ server/
 
 ## Batch 6 — Frontend: Project Foundation & Design System
 
-> **Goal:** Next.js project initialized, Tailwind design tokens configured, root layout wired, and all shared components built.
+> **Goal:** Next.js project initialized inside `client/`, all dependencies installed, `src/lib/` scaffolded following the analyzed project pattern, Better Auth + Stripe wired, and all shared components built.
 
-- [ ] Initialize `client/` with `create-next-app` (App Router, JavaScript, Tailwind CSS)
-- [ ] Install dependencies: `@tanstack/react-query`, `better-auth`, `lucide-react`, `recharts`, `axios`
-- [ ] Configure `tailwind.config.js`
-  - [ ] Extend colors: `navy: #0A0F1E`, `blue: #3B82F6`, `amber: #F59E0B`, `surface: #1E293B`
-  - [ ] Extend `borderRadius`: `card: 16px`, `btn: 12px`
-  - [ ] Add Inter font via Google Fonts in `app/layout.js`
-- [ ] Create `client/.env.local` with `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_BETTER_AUTH_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
-- [ ] Create `client/lib/authClient.js` — Better Auth client (`createAuthClient`) singleton
-- [ ] Create `client/lib/api.js` — Axios instance with base URL and `Authorization` header interceptor (attaches `userId` from session)
-- [ ] Create root `app/layout.js` — wraps `<QueryClientProvider>` + `<AuthProvider>` + `<Navbar>` + `<Footer>`
-- [ ] Build shared components in `app/components/shared/`
-  - [ ] `<ProductCard />` — image, category pill, name (2-line clamp), description (2-line clamp), stars + price, View Details button
-  - [ ] `<SkeletonCard />` — `animate-pulse` matching ProductCard shape exactly
-  - [ ] `<StatusBadge />` — color-coded by order status string
-  - [ ] `<Toast />` — success / error notification with auto-dismiss
-  - [ ] `<Modal />` — reusable overlay with close button and `{children}` slot
-  - [ ] `<AdminGuard />` — HOC: checks `session.user.role`, redirects to `/login` if not `"admin"`
-  - [ ] `<Pagination />` — numbered pages + Prev/Next arrows, URL-synced
+**Project Structure Pattern (from reference project):**
+```
+client/src/
+  app/
+    (main)/          # Public routes with Navbar + Footer layout
+    (dashboard)/     # Admin routes with AdminSidebar layout
+    api/
+      auth/[...all]/ # Better Auth handler
+      payment/       # Stripe checkout session handler
+  lib/
+    core/
+      server.js      # serverFetch, protectedFetch, serverMutation, serverDelete
+      session.js     # getUserSession, getUserToken, requireRole
+    api/             # Read-only fetcher functions (Server Components)
+      products.js
+      orders.js
+      cart.js
+    actions/         # `"use server"` mutating functions (Server Actions)
+      cart.js
+      orders.js
+      products.js
+      checkout.js
+    auth.js          # Better Auth server config (betterAuth + mongodbAdapter)
+    auth-client.js   # Better Auth client (createAuthClient + adminClient)
+    stripe.js        # Stripe server-only singleton
+  components/        # Shared reusable UI components
+```
+
+- [x] Initialize `client/` with `create-next-app` (App Router, JavaScript, Tailwind CSS, `src/` directory)
+- [x] Install dependencies:
+  - `better-auth` `mongodb` — Auth + DB adapter
+  - `stripe` `@stripe/stripe-js` — Stripe server + client SDKs
+  - `lucide-react` `react-icons` — Icons
+  - `react-hook-form` — Form handling
+  - `motion` — Animations
+- [x] Configure `tailwind.config.js` / `globals.css`
+  - [x] Extend colors: `navy: #0A0F1E`, `blue: #3B82F6`, `amber: #F59E0B`, `surface: #1E293B`
+  - [x] Add Inter font via Google Fonts in `app/layout.js`
+- [x] Create `client/.env.local` with:
+  - `NEXT_PUBLIC_BASE_URL` — base URL (used in `src/lib/core/server.js`)
+  - `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` — Better Auth config
+  - `MONGODB_URI`, `MONGODB_DB` — for Better Auth adapter
+  - `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — Stripe keys
+- [x] Scaffold `src/lib/core/server.js` — `serverFetch`, `protectedFetch`, `serverMutation`, `serverDelete` using native `fetch` + `authHeader()`
+- [x] Scaffold `src/lib/core/session.js` — `getUserSession`, `getUserToken`, `requireRole` using `auth.api.getSession({ headers })`
+- [x] Create `src/lib/auth.js` — `betterAuth` with `mongodbAdapter`, `emailAndPassword`, `admin()` plugin, user `role` field (default `"customer"`)
+- [x] Create `src/lib/auth-client.js` — `createAuthClient` with `adminClient()` plugin; export `signIn, signUp, signOut, useSession`
+- [x] Create `src/lib/stripe.js` — `import 'server-only'`, `new Stripe(process.env.STRIPE_SECRET_KEY)`
+- [x] Scaffold `src/lib/api/` fetcher files (use `serverFetch` / `protectedFetch`):
+  - [x] `products.js` — `getProducts(searchParams)`, `getProductBySlug(slug)`
+  - [x] `orders.js` — `getUserOrders()`, `getOrderById(id)`, `getAdminOrders()`
+  - [x] `cart.js` — `getUserCart()`
+  - [x] `customers.js` — `getAdminCustomers(page)`
+- [x] Scaffold `src/lib/actions/` Server Action files (`"use server"`):
+  - [x] `cart.js` — `addToCart(productId, quantity)`, `updateCartItem(productId, quantity)`
+  - [x] `orders.js` — `updateOrderStatus(orderId, status)`
+  - [x] `products.js` — `createProduct(data)`, `deleteProduct(id)`
+  - [x] `checkout.js` — `createStripeCheckoutSession(cartItems)` → calls `stripe.checkout.sessions.create`
+- [x] Create Next.js API Route Handlers:
+  - [x] `src/app/api/auth/[...all]/route.js` — `toNextJsHandler(auth)` (GET + POST)
+  - [x] `src/app/api/payment/route.js` — Stripe checkout session creator (POST), reads cart from our Express API, creates Stripe session, returns `{ url }`
+- [x] Create route group layouts:
+  - [x] `src/app/(main)/layout.js` — wraps `<Navbar>` + `{children}` + `<Footer>`
+  - [x] `src/app/(dashboard)/layout.jsx` — wraps `<AdminSidebar>` guard-checks `requireRole("admin")`
+- [x] Create root `src/app/layout.js` — sets `lang`, Inter font, dark theme, renders `<Toast.Provider />`
+- [x] Build shared components in `src/components/shared/`
+  - [x] `<ProductCard />` — image, category pill, name (2-line clamp), price (amber), "View Details" button
+  - [x] `<SkeletonCard />` — `animate-pulse` matching ProductCard shape
+  - [x] `<StatusBadge />` — color-coded by order status string
+  - [x] `<Modal />` — reusable overlay with close button and `{children}` slot
+  - [x] `<Pagination />` — numbered pages + Prev/Next arrows, URL-synced
+  - [x] `<AdminGuard />` — uses `requireRole("admin")` from `session.js`, redirects to `/login`
+- [ ] Push Batch 6 changes to GitHub
 
 ---
 
@@ -203,6 +258,7 @@ server/
   - [ ] `<Testimonials />` — CSS scroll-snap carousel, 6 testimonial cards, amber star ratings
   - [ ] `<Newsletter />` — Electric Blue gradient band, email input, animated envelope icon
   - [ ] `<FaqAccordion />` — 6 electronics-relevant items, smooth Tailwind expand/collapse
+- [ ] Push Batch 7 changes to GitHub
 
 ---
 
@@ -232,36 +288,39 @@ server/
   - [ ] `<ReviewsSection />` — star distribution bar + 4 seeded review cards
   - [ ] `<RelatedProducts />` — `GET /api/products?category=X&limit=4`, 4-card row
   - [ ] Hover prefetch on product cards via `queryClient.prefetchQuery()`
+- [ ] Push Batch 8 changes to GitHub
 
 ---
 
-## Batch 9 — Frontend: Auth Pages & Cart
+## Batch 9 — Frontend: Auth Pages & Cart + Stripe Checkout
 
-> **Goal:** Login, register, Google OAuth, demo login button, and the full cart + checkout flow.
+> **Goal:** Login, register, demo login button, the full cart flow, and Stripe-powered checkout (sandbox/test mode).
 
-- [ ] Build Login Page (`app/login/page.js`)
-  - [ ] Email + Password inputs with inline validation
-  - [ ] `Login` button (amber, full-width) — calls Better Auth `signIn`
-  - [ ] `Continue with Google` button — Better Auth Google OAuth flow
+- [ ] Build Login Page (`src/app/(main)/login/page.js`)
+  - [ ] Email + Password inputs with inline validation via `react-hook-form`
+  - [ ] `Login` button (amber, full-width) — calls `signIn` from `auth-client.js`
   - [ ] **Demo Login button** — auto-fills `demo@yourshop.com` / `Demo@123` and submits
   - [ ] Link to `/register`
   - [ ] Error messages displayed inline (no alert popups)
-- [ ] Build Register Page (`app/register/page.js`)
-  - [ ] Display Name · Email · Password · Confirm Password inputs
+- [ ] Build Register Page (`src/app/(main)/register/page.js`)
+  - [ ] Display Name · Email · Password · Confirm Password inputs via `react-hook-form`
   - [ ] Real-time password strength indicator bar
   - [ ] Validation: min 8 chars, 1 uppercase, 1 number, passwords match
-  - [ ] `Create Account` amber button + Google OAuth button
+  - [ ] `Create Account` amber button
   - [ ] Link to `/login`
-- [ ] Build Cart Page (`app/cart/page.js`) — protected
-  - [ ] `GET /api/cart` via TanStack Query (staleTime: 0)
-  - [ ] `<CartItem />` per line: image, name, price, `[−][qty][+]` → `PATCH /api/cart`, trash → `PATCH` with `quantity: 0`
-  - [ ] Optimistic quantity updates with rollback on error
+- [ ] Build Cart Page (`src/app/(main)/cart/page.js`) — protected (`requireRole` check)
+  - [ ] `getUserCart()` from `src/lib/api/cart.js` (Server Component fetch)
+  - [ ] `<CartItem />` per line: image, name, price, `[−][qty][+]` → `updateCartItem` Server Action, trash → quantity: 0
   - [ ] `<OrderSummary />` — subtotal, shipping (Free), total
-  - [ ] `Proceed to Checkout` button → `POST /api/checkout` → redirect to `/orders` on `201`
+  - [ ] `Proceed to Checkout` button → calls Next.js API Route `POST /api/payment` which creates Stripe Checkout Session
+  - [ ] Stripe redirects user to hosted checkout page (sandbox mode, test card `4242 4242 4242 4242`)
   - [ ] Empty cart state: illustration + "Continue Shopping" link
-- [ ] Build Checkout redirect/confirmation (`app/checkout/page.js`) — protected
-  - [ ] Show order confirmation summary after successful checkout (orderId, total, status)
+- [ ] Build Checkout Success Page (`src/app/(main)/checkout/success/page.js`)
+  - [ ] Reads `session_id` from URL query param
+  - [ ] Calls `POST /api/checkout` on our Express server to create the order in MongoDB
+  - [ ] Shows order confirmation summary (orderId, total, status: processing)
   - [ ] "View My Orders" and "Continue Shopping" CTAs
+- [ ] Push Batch 9 changes to GitHub
 
 ---
 
@@ -279,6 +338,7 @@ server/
   - [ ] Timeline: YourShop journey (horizontal scroll on mobile)
   - [ ] Core Values grid: Innovation, Quality, Transparency, Support (4-col desktop, 2-col mobile)
   - [ ] Team cards: avatar, name, role (seeded data — no placeholder names)
+- [ ] Push Batch 10 changes to GitHub
 - [ ] Build Contact Page (`app/contact/page.js`)
   - [ ] Two-column layout: form (Name, Email, Subject, Message) + info cards (email, phone, hours) + SVG map illustration
   - [ ] Client-side form validation with `useState`
@@ -288,60 +348,49 @@ server/
 
 ## Batch 11 — Frontend: Admin Dashboard
 
-> **Goal:** Fully functional admin shell with responsive sidebar/bottom-tab navigation and all 5 admin pages.
+> **Goal:** Fully functional admin shell using the `(dashboard)` route group pattern with `<AdminSidebar>` and all 5 admin pages.
 
-- [ ] Create Next.js Route Group `app/(admin)/layout.js`
-  - [ ] Wrap `<AdminGuard />` — redirect non-admins to `/login`
-  - [ ] Render `<AdminSidebar />` (desktop only) + `<AdminTopBar />` + `<AdminBottomTabs />` (mobile only) + `{children}`
-  - [ ] Main content: `pl-0` on mobile, `pl-60` on desktop
-- [ ] Build `<AdminSidebar />`
-  - [ ] 240px fixed, `hidden lg:block`
-  - [ ] Logo area: bolt icon + "Admin Panel" wordmark
-  - [ ] 5 `<AdminNavItem />` — icon + label, `usePathname()` active detection
-    - [ ] Overview (`LayoutDashboard` → `/admin`)
-    - [ ] Products (`Package` → `/admin/products`)
-    - [ ] Add Product (`PlusCircle` → `/admin/products/add`)
-    - [ ] Orders (`ClipboardList` → `/admin/orders`)
-    - [ ] Customers (`Users` → `/admin/customers`)
-  - [ ] Active state: `border-l-4 border-blue-500` + Electric Blue text
-  - [ ] Bottom section: separator + Logout (`🚪` red text)
-- [ ] Build `<AdminBottomTabs />`
-  - [ ] `fixed bottom-0`, `lg:hidden`, 5 icon-only tabs
-  - [ ] Min 48×48px touch targets
-  - [ ] Active: Electric Blue icon + dot indicator above
-  - [ ] iOS safe-area bottom padding
-- [ ] Build `<AdminTopBar />`
-  - [ ] Dynamic page title via `usePathname()`
-  - [ ] Mobile: back arrow → `/` + "Admin Panel" text
-  - [ ] Right: notification bell + admin avatar + logout dropdown
-- [ ] Build Admin Overview Page (`app/(admin)/admin/page.js`)
+- [ ] Create `src/app/(dashboard)/layout.jsx`
+  - [ ] Server Component: calls `requireRole("admin")` from `session.js` — auto-redirects non-admins
+  - [ ] Renders `<DashboardNavbar>` (sidebar wrapper component)
+- [ ] Build `<DashboardNavbar />` (sidebar wrapper `src/components/Dashboard/DashboardNavbar.jsx`)
+  - [ ] Desktop: 240px fixed left sidebar, `hidden lg:flex`
+  - [ ] Mobile: `<AdminBottomTabs />` fixed bottom-bar, icon-only, `lg:hidden`
+  - [ ] 5 nav items using `usePathname()` for active state:
+    - Overview (`LayoutDashboard` → `/admin`)
+    - Products (`Package` → `/admin/products`)
+    - Add Product (`PlusCircle` → `/admin/products/add`)
+    - Orders (`ClipboardList` → `/admin/orders`)
+    - Customers (`Users` → `/admin/customers`)
+  - [ ] Active state: `border-l-4 border-blue-500` (desktop), blue icon dot (mobile)
+  - [ ] Bottom: Logout button (red text)
+  - [ ] Passes `{children}` to main content area with `pl-60` on desktop, `pb-20` on mobile
+- [ ] Build Admin Overview Page (`src/app/(dashboard)/admin/page.js`)
   - [ ] 4 stat cards: Total Orders, Revenue, Products, Customers
-  - [ ] `<OrderStatusChart />` — Recharts `BarChart` (orders by status count)
-  - [ ] `<RevenueChart />` — Recharts `LineChart` (revenue last 7 days)
+  - [ ] `<OrderStatusChart />` — Recharts `BarChart`
+  - [ ] `<RevenueChart />` — Recharts `LineChart`
   - [ ] Recent Orders mini-table (last 5) + "View All Orders" link
-  - [ ] Low Stock Alerts list (stock < 5, sorted ascending)
-- [ ] Build Admin Products Page (`app/(admin)/admin/products/page.js`)
-  - [ ] Table: IMG, Name, Category, Price, Stock, Actions (Delete)
-  - [ ] Low-stock rows: amber left border; out-of-stock: red left border
-  - [ ] Client-side search bar above table
-  - [ ] Optimistic delete with TanStack Query rollback
+  - [ ] Low Stock Alerts list (stock < 5)
+- [ ] Build Admin Products Page (`src/app/(dashboard)/admin/products/page.js`)
+  - [ ] `getProducts()` from `src/lib/api/products.js` (Server Component)
+  - [ ] Table: IMG, Name, Category, Price, Stock, Delete Action
+  - [ ] Delete calls `deleteProduct(id)` Server Action from `src/lib/actions/products.js`
+  - [ ] Low-stock rows: amber border; out-of-stock: red border
   - [ ] `[+ Add New Product]` button → `/admin/products/add`
   - [ ] Pagination
-- [ ] Build Admin Add Product Page (`app/(admin)/admin/products/add/page.js`)
-  - [ ] Form: Name, Short Description, Full Description, Category dropdown, Brand, Price (USD), Stock, Tags, Image URL
-  - [ ] `POST /api/products` on submit → success toast → redirect to `/admin/products`
-  - [ ] Inline field-level error messages
-- [ ] Build Admin Orders Page (`app/(admin)/admin/orders/page.js`)
-  - [ ] `<OrderStatusChart />` reused at top
-  - [ ] Table: Order ID, Customer ID, Total, Status badge, Date, Update button
-  - [ ] Status filter dropdown (All / Pending / Processing / Shipped / Delivered / Cancelled)
-  - [ ] `[Update]` → `<Modal />` with status dropdown (transition-constrained) + note field → `PATCH /api/admin/orders/:id`
-  - [ ] Date range filter (from/to date pickers)
-- [ ] Build Admin Customers Page (`app/(admin)/admin/customers/page.js`)
-  - [ ] `GET /api/admin/customers` paginated
+- [ ] Build Admin Add Product Page (`src/app/(dashboard)/admin/products/add/page.js`)
+  - [ ] `react-hook-form` form: Name, Description, Category, Brand, Price, Stock, Tags, Image URL
+  - [ ] Submit calls `createProduct(data)` Server Action → success toast → redirect to `/admin/products`
+- [ ] Build Admin Orders Page (`src/app/(dashboard)/admin/orders/page.js`)
+  - [ ] `getAdminOrders()` from `src/lib/api/orders.js`
+  - [ ] Table: Order ID, Customer, Total, Status badge, Date
+  - [ ] Status filter dropdown
+  - [ ] `[Update]` → `<Modal />` with status dropdown → `updateOrderStatus` Server Action
+- [ ] Build Admin Customers Page (`src/app/(dashboard)/admin/customers/page.js`)
+  - [ ] `getAdminCustomers(page)` from `src/lib/api/customers.js`
   - [ ] Table: Avatar, Display Name, Email, Role, Joined date
-  - [ ] Read-only (no action buttons)
   - [ ] Pagination
+- [ ] Push Batch 11 changes to GitHub
 
 ---
 
@@ -364,6 +413,7 @@ server/
   - [ ] Append token chunks to the active model bubble as they arrive
   - [ ] On stream complete: parse and strip `suggestedPrompts` JSON block from response text
   - [ ] Render parsed prompts as `<SuggestedPrompts />` pill buttons
+- [ ] Push Batch 12 changes to GitHub
 - [ ] Update backend `POST /api/chat` to support streaming (`generateContentStream`) and inject suggested prompts JSON at end of each response
 
 ---
@@ -377,7 +427,7 @@ server/
 | 3 | Backend: Cart System | `[x]` |
 | 4 | Backend: Checkout & Orders API | `[x]` |
 | 5 | Backend: Customers & AI Chat | `[x]` |
-| 6 | Frontend: Project Foundation & Design System | `[ ]` |
+| 6 | Frontend: Project Foundation & Design System | `[x]` |
 | 7 | Frontend: Navbar, Footer & Home Page | `[ ]` |
 | 8 | Frontend: Shop & Product Detail | `[ ]` |
 | 9 | Frontend: Auth Pages & Cart | `[ ]` |
