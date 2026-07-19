@@ -100,10 +100,10 @@ function OrderCard({ order }) {
                   >
                     <div className="flex items-center gap-4">
                       <div className="relative w-16 h-16 rounded-xl bg-slate-900 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                        {item.product?.imageUrl ? (
+                        {item.imageUrl ? (
                           <Image
-                            src={item.product.imageUrl}
-                            alt={item.product.name}
+                            src={item.imageUrl}
+                            alt={item.name}
                             fill
                             className="object-cover"
                           />
@@ -113,7 +113,7 @@ function OrderCard({ order }) {
                       </div>
                       <div>
                         <h4 className="font-semibold text-white text-sm line-clamp-1">
-                          {item.product?.name || "Product Name"}
+                          {item.name || "Product Name"}
                         </h4>
                         <div className="text-xs text-gray-400 mt-0.5">
                           Qty: {item.quantity} • ${itemPrice.toFixed(2)} each
