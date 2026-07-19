@@ -328,21 +328,21 @@ client/src/
 
 > **Goal:** Customer order history with status badges and expandable line items, plus About and Contact pages.
 
-- [ ] Build Orders Page (`app/orders/page.js`) — protected
-  - [ ] `GET /api/orders` paginated, newest first
-  - [ ] `<OrderCard />` — Order ID, date, total, color-coded `<StatusBadge />`
-  - [ ] Expandable accordion: click card → reveals snapshotted line items (image, name, qty, price)
-  - [ ] Pagination component
-- [ ] Build About Page (`app/about/page.js`)
-  - [ ] Hero section: "Our Mission" statement + brand illustration
-  - [ ] Timeline: YourShop journey (horizontal scroll on mobile)
-  - [ ] Core Values grid: Innovation, Quality, Transparency, Support (4-col desktop, 2-col mobile)
-  - [ ] Team cards: avatar, name, role (seeded data — no placeholder names)
+- [x] Build Orders Page (`app/orders/page.js`) — protected
+  - [x] `GET /api/orders` paginated, newest first
+  - [x] `<OrderCard />` — Order ID, date, total, color-coded `<StatusBadge />`
+  - [x] Expandable accordion: click card → reveals snapshotted line items (image, name, qty, price)
+  - [x] Pagination component
+- [x] Build About Page (`app/about/page.js`)
+  - [x] Hero section: "Our Mission" statement + brand illustration
+  - [x] Timeline: YourShop journey (horizontal scroll on mobile)
+  - [x] Core Values grid: Innovation, Quality, Transparency, Support (4-col desktop, 2-col mobile)
+  - [x] Team cards: avatar, name, role (seeded data — no placeholder names)
 - [ ] Push Batch 10 changes to GitHub
-- [ ] Build Contact Page (`app/contact/page.js`)
-  - [ ] Two-column layout: form (Name, Email, Subject, Message) + info cards (email, phone, hours) + SVG map illustration
-  - [ ] Client-side form validation with `useState`
-  - [ ] Success / error state feedback after submit
+- [x] Build Contact Page (`app/contact/page.js`)
+  - [x] Two-column layout: form (Name, Email, Subject, Message) + info cards (email, phone, hours) + SVG map illustration
+  - [x] Client-side form validation with `useState`
+  - [x] Success / error state feedback after submit
 
 ---
 
